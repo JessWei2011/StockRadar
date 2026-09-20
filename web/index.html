@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockRadar - 雙鴻 (3324) 歷史收 K 回放 Dashboard</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: #131b2e;
+      --card-border: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --up-color: #ef4444;
+      --down-color: #22c55e;
+      --panel-bg: #0f172a;
+      --badge-watch: #f59e0b;
+      --badge-caution: #ef4444;
+      --badge-info: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* 頂部標題與警語 */
+    header {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header-title h1 {
+      font-size: 1.6rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title .tag {
+      font-size: 0.85rem;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .disclaimer-banner {
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* 參數說明列 */
+    .param-bar {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .param-bar strong {
+      color: var(--accent);
+    }
+
+    /* 控制面板 */
+    .control-panel {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .playback-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      background-color: var(--panel-bg);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn.active {
+      background-color: var(--accent);
+      color: #0b0f19;
+      border-color: var(--accent);
+    }
+
+    .progress-section {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 8px;
+      background-color: var(--panel-bg);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent);
+      transition: width 0.1s linear;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* OHLCV 主資訊看板 */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 主工作區兩欄布局：左邊 K 棒，右邊訊號雷達 */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .status-panel {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel-header {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header .sub-badge {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .log-table th, .log-table td {
+      padding: 8px 10px;
+      text-align: right;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .log-table th:first-child, .log-table td:first-child {
+      text-align: left;
+    }
+
+    .log-table th {
+      color: var(--text-muted);
+      background-color: var(--panel-bg);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* 訊號卡片清單 */
+    .signals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .signal-card {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      border-left: 4px solid var(--accent);
+      animation: none;
+    }
+
+    .signal-card.WATCH {
+      border-left-color: var(--badge-watch);
+    }
+
+    .signal-card.CAUTION {
+      border-left-color: var(--badge-caution);
+    }
+
+    .signal-card.INFO {
+      border-left-color: var(--badge-info);
+    }
+
+    .signal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .signal-name {
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-sev {
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-sev.WATCH {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: var(--badge-watch);
+    }
+
+    .badge-sev.CAUTION {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: var(--badge-caution);
+    }
+
+    .badge-sev.INFO {
+      background-color: rgba(56, 189, 248, 0.2);
+      color: var(--badge-info);
+    }
+
+    .signal-time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .signal-reason {
+      color: #e2e8f0;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    .signal-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background-color: rgba(255, 255, 255, 0.03);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .color-up { color: var(--up-color); }
+    .color-down { color: var(--down-color); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-title">
+        <h1>雙鴻 (3324) 歷史收 K 回放 <span class="tag">2026-08-28 1m</span></h1>
+      </div>
+      <div class="disclaimer-banner">
+        ⚠️ 歷史收 K 回放，訊號僅為盤勢結構觀察，不是即時行情、預測或投資建議
+      </div>
+    </header>
+
+    <!-- 參數與規則說明列 -->
+    <div class="param-bar">
+      <span>📐 <strong>雷達觀察參數：</strong></span>
+      <span>階梯窗: <code id="paramStructure">structure_window=5</code></span>
+      <span>突破窗: <code id="paramBreakout">breakout_window=20</code></span>
+      <span>爆量倍數: <code id="paramVolume">volume_multiple=2.0x</code></span>
+      <span>轉弱收盤位: <code id="paramReversal">reversal_close_max=0.35</code></span>
+    </div>
+
+    <!-- 控制面板 -->
+    <div class="control-panel">
+      <div class="playback-controls">
+        <button id="btnPause" class="btn active">⏸️ 暫停</button>
+        <button id="btnSpeed1" class="btn">1x</button>
+        <button id="btnSpeed5" class="btn">5x</button>
+        <button id="btnSpeed20" class="btn">20x</button>
+        <button id="btnReset" class="btn">🔄 重置</button>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <span id="progressText" class="progress-text">0 / 0 (0%)</span>
+      </div>
+    </div>
+
+    <!-- 候選進出場事件：主判讀，僅顯示已收 K 的狀態轉換 -->
+    <div class="param-bar" style="background-color: var(--card-bg); border-color: var(--card-border); padding: 16px 20px; margin-bottom: 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;">
+      <span id="candidateStatusBadge" class="badge-sev" style="background-color: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 6px 10px; font-size: 0.85rem;">尚無候選</span>
+      <div>
+        <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">🎯 候選進出場事件雷達 <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: normal;">已收 1 分 K 才判定，非交易指令</span></div>
+        <div id="candidateSummaryText" style="color: #cbd5e1; font-size: 0.9rem;">等待回放啟動；只在放量突破候選成立或失效時更新。</div>
+        <div id="candidateMetricsText" style="margin-top: 4px; font-size: 0.82rem; color: var(--text-muted); font-variant-numeric: tabular-nums;">觸發價: -- | 失效價: -- | VWAP: --</div>
+      </div>
+    </div>
+
+    <!-- 量價主導權與成交量壓力水位看板 (RADAR-PHASE-004 & RADAR-PHASE-006) -->
+    <div id="dominantContextCard" class="param-bar" style="background-color: var(--card-bg); border-color: var(--card-border); padding: 18px 22px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;">
+      <!-- 左側：量價脈絡與即時讀數說明 -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span style="font-weight: 700; color: var(--text-main); font-size: 1.05rem;">⚖️ 短線量價輔助：</span>
+          <span id="dominantStatusBadge" class="badge-sev" style="background-color: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 4px 10px; font-size: 0.85rem;">⚪ 觀察中</span>
+          <span id="gaugeDirectionBadge" class="badge-sev" style="background-color: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 4px 8px; font-size: 0.8rem;">STABLE ➔</span>
+        </div>
+        <div id="dominantSummaryText" style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.4;">
+          等待回放啟動...
+        </div>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; color: var(--text-muted); font-variant-numeric: tabular-nums;">
+          <span id="gaugeLevelText">水位: <strong>0.0</strong></span>
+          <span id="gaugeDeltaText">變動: <strong>0.0</strong></span>
+          <span id="dominantMetricsText">量比: -- | 關鍵價: --</span>
+        </div>
+      </div>
+
+      <!-- 右側：直立溫度計式成交量壓力水位管 (至少 260px 高) -->
+      <div class="gauge-container" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.25); padding: 12px 18px; border-radius: 12px; border: 1px solid var(--card-border);">
+        <!-- 刻度標示 -->
+        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 260px; font-size: 0.72rem; color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; user-select: none;">
+          <span style="color: var(--up-color);">+100</span>
+          <span style="color: var(--up-color);">+50</span>
+          <span style="color: var(--text-main); font-weight: 700;">0 (中線)</span>
+          <span style="color: var(--down-color);">-50</span>
+          <span style="color: var(--down-color);">-100</span>
+        </div>
+
+        <!-- 玻璃水位管本體 -->
+        <div class="gauge-tube" style="position: relative; width: 34px; height: 260px; background: #070b14; border: 2px solid #334155; border-radius: 17px; overflow: hidden; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);">
+          <!-- 0 中線標記線 -->
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #64748b; z-index: 5; transform: translateY(-50%); opacity: 0.8;"></div>
+          
+          <!-- 上半部液面：正值依台股慣例用紅色，自 0 往上延伸。 -->
+          <div id="gaugeLiquidUp" style="position: absolute; bottom: 50%; left: 3px; right: 3px; height: 0%; background: linear-gradient(to top, #ef4444, #f87171); border-radius: 4px 4px 0 0; transition: height 350ms cubic-bezier(0.4, 0, 0.2, 1); z-index: 2;"></div>
+
+          <!-- 下半部液面：負值依台股慣例用綠色，自 0 往下延伸。 -->
+          <div id="gaugeLiquidDown" style="position: absolute; top: 50%; left: 3px; right: 3px; height: 0%; background: linear-gradient(to bottom, #10b981, #34d399); border-radius: 0 0 4px 4px; transition: height 350ms cubic-bezier(0.4, 0, 0.2, 1); z-index: 2;"></div>
+        </div>
+
+        <!-- 水位管標籤 -->
+        <div style="writing-mode: vertical-rl; text-orientation: mixed; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; user-select: none;">
+          成交量壓力水位
+        </div>
+      </div>
+    </div>
+
+    <!-- 即時 OHLCV 卡片 -->
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <div class="metric-label">收 K 時間 (Time)</div>
+        <div id="valTime" class="metric-value" style="font-size: 1.1rem; color: var(--accent);">--:--:--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">開盤價 (Open)</div>
+        <div id="valOpen" class="metric-value">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">最高價 (High)</div>
+        <div id="valHigh" class="metric-value color-up">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">最低價 (Low)</div>
+        <div id="valLow" class="metric-value color-down">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">收盤價 (Close)</div>
+        <div id="valClose" class="metric-value">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">單分量 / 筆數</div>
+        <div id="valVolume" class="metric-value" style="font-size: 1.1rem;">--</div>
+      </div>
+    </div>
+
+    <!-- 主區塊：左已收 K，右結構訊號 -->
+    <div class="main-layout">
+      <!-- 左：最近收 K 紀錄 -->
+      <div class="status-panel">
+        <div class="panel-header">
+          <span>📜 已收 K 歷史明細</span>
+          <span id="sessionStatus" class="sub-badge">載入中...</span>
+        </div>
+        <div id="tableContainer">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>時間</th>
+                <th>開盤</th>
+                <th>最高</th>
+                <th>最低</th>
+                <th>收盤</th>
+                <th>分量</th>
+                <th>筆數</th>
+              </tr>
+            </thead>
+            <tbody id="barHistoryBody">
+              <!-- 動態插入 -->
+            </tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+          尚無回放資料或資料集為空
+        </div>
+      </div>
+
+      <!-- 右：結構訊號雷達面板 -->
+      <div class="status-panel">
+        <div class="panel-header">
+          <span>🧭 候選事件時間線（非交易指令）</span>
+          <span id="signalStatus" class="sub-badge">等待回放...</span>
+        </div>
+        <div id="signalContainer" class="signals-list">
+          <!-- 動態插入訊號卡片 -->
+        </div>
+        <div id="signalEmptyState" class="empty-state">
+          候選事件資料尚未載入或截至目前未觸發
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 預設 Mock 契約資料
+    const mockReplaySession = {
+      "schema_version": "1.0",
+      "symbol": "3324",
+      "market_date": "2026-08-28",
+      "timeframe": "1m",
+      "source": "mock_historical_kbars",
+      "bars": [
+        {"timestamp": "2026-08-28T09:00:00+08:00", "open": 645.0, "high": 648.0, "low": 644.0, "close": 647.0, "volume": 125, "amount": 80875000.0, "tick_count": 89},
+        {"timestamp": "2026-08-28T09:01:00+08:00", "open": 647.0, "high": 651.0, "low": 646.0, "close": 650.0, "volume": 180, "amount": 117000000.0, "tick_count": 134},
+        {"timestamp": "2026-08-28T09:02:00+08:00", "open": 650.0, "high": 652.0, "low": 648.0, "close": 649.0, "volume": 95, "amount": 61655000.0, "tick_count": 72},
+        {"timestamp": "2026-08-28T09:03:00+08:00", "open": 649.0, "high": 650.0, "low": 647.0, "close": 648.0, "volume": 82, "amount": 53136000.0, "tick_count": 60},
+        {"timestamp": "2026-08-28T09:04:00+08:00", "open": 648.0, "high": 653.0, "low": 648.0, "close": 652.0, "volume": 210, "amount": 136920000.0, "tick_count": 156}
+      ]
+    };
+
+    class ReplayDashboard {
+      constructor(sessionData, signalsData) {
+        this.session = sessionData;
+        this.signalsData = signalsData; // 結構訊號資料
+        this.currentIndex = -1;
+        this.lastEventKey = null;
+        this.speedMultiplier = 0; // 0 = 暫停
+        this.timer = null;
+        this.baseIntervalMs = 1000;
+
+        this.initDOMElements();
+        this.bindEvents();
+        this.initSession();
+      }
+
+      initDOMElements() {
+        this.btnPause = document.getElementById('btnPause');
+        this.btnSpeed1 = document.getElementById('btnSpeed1');
+        this.btnSpeed5 = document.getElementById('btnSpeed5');
+        this.btnSpeed20 = document.getElementById('btnSpeed20');
+        this.btnReset = document.getElementById('btnReset');
+
+        this.progressBar = document.getElementById('progressBar');
+        this.progressText = document.getElementById('progressText');
+        this.sessionStatus = document.getElementById('sessionStatus');
+        this.signalStatus = document.getElementById('signalStatus');
+
+        this.valTime = document.getElementById('valTime');
+        this.valOpen = document.getElementById('valOpen');
+        this.valHigh = document.getElementById('valHigh');
+        this.valLow = document.getElementById('valLow');
+        this.valClose = document.getElementById('valClose');
+        this.valVolume = document.getElementById('valVolume');
+
+        this.barHistoryBody = document.getElementById('barHistoryBody');
+        this.emptyState = document.getElementById('emptyState');
+        this.tableContainer = document.getElementById('tableContainer');
+
+        this.signalContainer = document.getElementById('signalContainer');
+        this.signalEmptyState = document.getElementById('signalEmptyState');
+        this.paramStructure = document.getElementById('paramStructure');
+        this.paramBreakout = document.getElementById('paramBreakout');
+        this.paramVolume = document.getElementById('paramVolume');
+        this.paramReversal = document.getElementById('paramReversal');
+      }
+
+      bindEvents() {
+        this.btnPause.addEventListener('click', () => this.setSpeed(0));
+        this.btnSpeed1.addEventListener('click', () => this.setSpeed(1));
+        this.btnSpeed5.addEventListener('click', () => this.setSpeed(5));
+        this.btnSpeed20.addEventListener('click', () => this.setSpeed(20));
+        this.btnReset.addEventListener('click', () => this.reset());
+      }
+
+      initSession() {
+        if (!this.session || !this.session.bars || this.session.bars.length === 0) {
+          this.emptyState.style.display = 'block';
+          this.tableContainer.style.display = 'none';
+          this.sessionStatus.textContent = '狀態: 無有效資料';
+          return;
+        }
+
+        this.emptyState.style.display = 'none';
+        this.tableContainer.style.display = 'block';
+        this.sessionStatus.textContent = `來源: ${this.session.source} (${this.session.bars.length} 根)`;
+
+        if (this.signalsData && Array.isArray(this.signalsData.events)) {
+          const displayedCount = this.signalsData.events.filter(event => event.severity !== 'INFO').length;
+          this.signalStatus.textContent = `顯示 WATCH / CAUTION：${displayedCount} 筆`;
+          this.renderParameters(this.signalsData.parameters);
+        } else {
+          this.signalStatus.textContent = `訊號資料尚未載入`;
+        }
+
+        this.updateProgress();
+      }
+
+      renderParameters(parameters) {
+        if (!parameters) return;
+        const { structure_window, breakout_window, volume_multiple, reversal_close_position_max } = parameters;
+        if (Number.isFinite(structure_window)) this.paramStructure.textContent = `structure_window=${structure_window}`;
+        if (Number.isFinite(breakout_window)) this.paramBreakout.textContent = `breakout_window=${breakout_window}`;
+        if (Number.isFinite(volume_multiple)) this.paramVolume.textContent = `volume_multiple=${volume_multiple}x`;
+        if (Number.isFinite(reversal_close_position_max)) this.paramReversal.textContent = `reversal_close_max=${reversal_close_position_max}`;
+      }
+
+      setSpeed(speed) {
+        this.speedMultiplier = speed;
+        [this.btnPause, this.btnSpeed1, this.btnSpeed5, this.btnSpeed20].forEach(btn => btn.classList.remove('active'));
+
+        if (speed === 0) {
+          this.btnPause.classList.add('active');
+          if (this.timer) clearInterval(this.timer);
+          this.timer = null;
+        } else {
+          if (speed === 1) this.btnSpeed1.classList.add('active');
+          if (speed === 5) this.btnSpeed5.classList.add('active');
+          if (speed === 20) this.btnSpeed20.classList.add('active');
+
+          if (this.timer) clearInterval(this.timer);
+          const interval = Math.max(50, this.baseIntervalMs / speed);
+          this.timer = setInterval(() => this.step(), interval);
+        }
+      }
+
+      reset() {
+        this.setSpeed(0);
+        this.currentIndex = -1;
+        this.barHistoryBody.innerHTML = '';
+        this.signalContainer.innerHTML = '';
+        this.lastEventKey = null;
+        this.signalEmptyState.style.display = 'block';
+        this.signalEmptyState.textContent = '⚪ 目前尚未形成候選事件。';
+
+        const candidateBadge = document.getElementById('candidateStatusBadge');
+        const candidateSummary = document.getElementById('candidateSummaryText');
+        const candidateMetrics = document.getElementById('candidateMetricsText');
+        if (candidateBadge && candidateSummary && candidateMetrics) {
+          candidateBadge.textContent = '尚無候選';
+          candidateBadge.style.color = 'var(--accent)';
+          candidateBadge.style.backgroundColor = 'rgba(56, 189, 248, 0.15)';
+          candidateSummary.textContent = '等待回放啟動；只在放量突破候選成立或失效時更新。';
+          candidateMetrics.textContent = '觸發價: -- | 失效價: -- | VWAP: --';
+        }
+
+        // 重設量價脈絡看板
+        const badge = document.getElementById('dominantStatusBadge');
+        const summary = document.getElementById('dominantSummaryText');
+        const metrics = document.getElementById('dominantMetricsText');
+        if (badge && summary && metrics) {
+          badge.textContent = '⚪ 觀察中';
+          badge.style.color = 'var(--text-muted)';
+          badge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+          summary.textContent = '等待回放啟動...';
+          metrics.textContent = '量比: -- | 關鍵價位: --';
+        }
+
+        // 重設成交量壓力水位管 (歸零至 0 中線)
+        const liquidUp = document.getElementById('gaugeLiquidUp');
+        const liquidDown = document.getElementById('gaugeLiquidDown');
+        const levelText = document.getElementById('gaugeLevelText');
+        const deltaText = document.getElementById('gaugeDeltaText');
+        const dirBadge = document.getElementById('gaugeDirectionBadge');
+        if (liquidUp) liquidUp.style.height = '0%';
+        if (liquidDown) liquidDown.style.height = '0%';
+        if (levelText) levelText.innerHTML = '水位: <strong>0.0</strong>';
+        if (deltaText) deltaText.innerHTML = '變動: <strong>0.0</strong>';
+        if (dirBadge) {
+          dirBadge.textContent = 'STABLE ➔';
+          dirBadge.style.color = 'var(--text-muted)';
+          dirBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+        }
+
+        this.valTime.textContent = '--:--:--';
+        this.valOpen.textContent = '--';
+        this.valHigh.textContent = '--';
+        this.valLow.textContent = '--';
+        this.valClose.textContent = '--';
+        this.valVolume.textContent = '--';
+        this.updateProgress();
+      }
+
+      step() {
+        if (this.currentIndex + 1 < this.session.bars.length) {
+          this.currentIndex++;
+          const bar = this.session.bars[this.currentIndex];
+          this.renderBar(bar);
+          this.syncSignals(bar.timestamp);
+          this.updateProgress();
+        } else {
+          this.setSpeed(0);
+          this.sessionStatus.textContent = '狀態: 回放已結束';
+        }
+      }
+
+      renderBar(bar) {
+        const timeStr = bar.timestamp.split('T')[1].substring(0, 8);
+        this.valTime.textContent = timeStr;
+        this.valOpen.textContent = bar.open.toFixed(1);
+        this.valHigh.textContent = bar.high.toFixed(1);
+        this.valLow.textContent = bar.low.toFixed(1);
+        this.valClose.textContent = bar.close.toFixed(1);
+        this.valVolume.textContent = `${bar.volume} 張 / ${bar.tick_count} 筆`;
+
+        const isUp = bar.close >= bar.open;
+        this.valClose.className = `metric-value ${isUp ? 'color-up' : 'color-down'}`;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${timeStr}</td>
+          <td>${bar.open.toFixed(1)}</td>
+          <td class="color-up">${bar.high.toFixed(1)}</td>
+          <td class="color-down">${bar.low.toFixed(1)}</td>
+          <td class="${isUp ? 'color-up' : 'color-down'}">${bar.close.toFixed(1)}</td>
+          <td>${bar.volume}</td>
+          <td>${bar.tick_count}</td>
+        `;
+        this.barHistoryBody.insertBefore(row, this.barHistoryBody.firstChild);
+
+        // RADAR-P007: 候選事件只會使用 <= 當前已收 K 的資料。
+        this.updateCandidateState(bar.timestamp);
+
+        // RADAR-P004: 依據後端 market-context JSON 更新量價脈絡
+        this.updateDominantContext(bar.timestamp);
+
+        // RADAR-P006: 依據後端 pressure-gauge JSON 更新直立水位管
+        this.updatePressureGauge(bar.timestamp);
+      }
+
+      updatePressureGauge(currentTimestamp) {
+        const liquidUp = document.getElementById('gaugeLiquidUp');
+        const liquidDown = document.getElementById('gaugeLiquidDown');
+        const levelText = document.getElementById('gaugeLevelText');
+        const deltaText = document.getElementById('gaugeDeltaText');
+        const dirBadge = document.getElementById('gaugeDirectionBadge');
+        if (!liquidUp || !liquidDown || !levelText || !deltaText || !dirBadge) return;
+
+        if (!this.pressureGaugeData || !Array.isArray(this.pressureGaugeData.readings)) {
+          liquidUp.style.height = '0%';
+          liquidDown.style.height = '0%';
+          levelText.innerHTML = '水位: <strong>--</strong>';
+          deltaText.innerHTML = '變動: <strong>--</strong>';
+          dirBadge.textContent = '未載入';
+          return;
+        }
+
+        // 嚴格只讀取 <= 當前時間的 readings（絕不預覽未來）
+        const availableReadings = this.pressureGaugeData.readings.filter(r => r.timestamp <= currentTimestamp);
+        if (availableReadings.length === 0) {
+          liquidUp.style.height = '0%';
+          liquidDown.style.height = '0%';
+          levelText.innerHTML = '水位: <strong>0.0</strong>';
+          deltaText.innerHTML = '變動: <strong>0.0</strong>';
+          dirBadge.textContent = 'STABLE ➔';
+          return;
+        }
+
+        const reading = availableReadings[availableReadings.length - 1];
+        if (!reading.available) {
+          liquidUp.style.height = '0%';
+          liquidDown.style.height = '0%';
+          levelText.innerHTML = '水位: <strong>0.0</strong>';
+          deltaText.innerHTML = '變動: <strong>0.0</strong>';
+          dirBadge.textContent = '建立量能基準中';
+          dirBadge.style.color = 'var(--text-muted)';
+          dirBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+          return;
+        }
+
+        const level = Number(reading.level) || 0;
+        const delta = Number(reading.delta) || 0;
+        const direction = reading.direction || 'STABLE';
+
+        // 依契約：-100..100 映射至半管的高度 (0%..50% of 260px)
+        const absPct = Math.min(50, (Math.abs(level) / 100) * 50);
+
+        if (level >= 0) {
+          // 正值：自 0 中線往上延伸
+          liquidUp.style.height = `${absPct}%`;
+          liquidDown.style.height = '0%';
+        } else {
+          // 負值：自 0 中線往下延伸
+          liquidUp.style.height = '0%';
+          liquidDown.style.height = `${absPct}%`;
+        }
+
+        levelText.innerHTML = `水位: <strong>${level >= 0 ? '+' : ''}${level.toFixed(1)}</strong>`;
+        deltaText.innerHTML = `變動: <strong>${delta >= 0 ? '+' : ''}${delta.toFixed(1)}</strong>`;
+
+        if (direction === 'RISING') {
+          dirBadge.textContent = 'RISING ▲';
+          dirBadge.style.color = 'var(--up-color)';
+          dirBadge.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+        } else if (direction === 'FALLING') {
+          dirBadge.textContent = 'FALLING ▼';
+          dirBadge.style.color = 'var(--down-color)';
+          dirBadge.style.backgroundColor = 'rgba(16, 185, 129, 0.15)';
+        } else {
+          dirBadge.textContent = 'STABLE ➔';
+          dirBadge.style.color = 'var(--text-muted)';
+          dirBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+        }
+      }
+
+      updateCandidateState(currentTimestamp) {
+        const badge = document.getElementById('candidateStatusBadge');
+        const summary = document.getElementById('candidateSummaryText');
+        const metrics = document.getElementById('candidateMetricsText');
+        if (!badge || !summary || !metrics) return;
+        if (!this.candidateEventsData || !Array.isArray(this.candidateEventsData.events)) {
+          badge.textContent = '候選未載入';
+          summary.textContent = '候選事件資料尚未載入。';
+          return;
+        }
+        const activeEvents = this.candidateEventsData.events.filter(event => event.timestamp <= currentTimestamp);
+        if (activeEvents.length === 0) {
+          badge.textContent = '尚無候選';
+          badge.style.color = 'var(--accent)';
+          badge.style.backgroundColor = 'rgba(56, 189, 248, 0.15)';
+          summary.textContent = '尚未出現同時符合突破、量能與 VWAP 的候選型態。';
+          metrics.textContent = '觸發價: -- | 失效價: -- | VWAP: --';
+          return;
+        }
+        const event = activeEvents[activeEvents.length - 1];
+        const invalidated = event.kind === 'EXIT_CANDIDATE_TRIGGERED';
+        badge.textContent = invalidated ? '候選已失效' : '候選型態成立';
+        badge.style.color = invalidated ? 'var(--down-color)' : 'var(--up-color)';
+        badge.style.backgroundColor = invalidated ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+        summary.textContent = event.summary;
+        metrics.textContent = `收盤: ${Number(event.close).toFixed(1)} | 觸發價: ${Number(event.breakout_level).toFixed(1)} | 失效價: ${Number(event.invalidation_price).toFixed(1)} | VWAP: ${Number(event.vwap).toFixed(1)} | 量比: ${Number(event.volume_ratio).toFixed(2)}x`;
+      }
+
+      updateDominantContext(currentTimestamp) {
+        const badge = document.getElementById('dominantStatusBadge');
+        const summary = document.getElementById('dominantSummaryText');
+        const metrics = document.getElementById('dominantMetricsText');
+        if (!badge || !summary || !metrics) return;
+
+        if (!this.marketContextData || !Array.isArray(this.marketContextData.contexts)) {
+          badge.textContent = '⚪ 觀察中';
+          badge.style.color = 'var(--text-muted)';
+          badge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+          summary.textContent = '量價脈絡資料尚未載入';
+          metrics.textContent = '量比: -- | 關鍵價位: --';
+          return;
+        }
+
+        // 只讀取 <= 當前時間的 context（嚴禁預覽未來）
+        const activeContexts = this.marketContextData.contexts.filter(c => c.timestamp <= currentTimestamp);
+        if (activeContexts.length === 0) {
+          badge.textContent = '⚪ 觀察中';
+          badge.style.color = 'var(--text-muted)';
+          badge.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+          summary.textContent = '目前無重要量價主導事件';
+          metrics.textContent = '量比: -- | 關鍵價位: --';
+          return;
+        }
+
+        const latestCtx = activeContexts[activeContexts.length - 1];
+        const posture = latestCtx.posture; // 'PRICE_VOLUME_BULLISH' | 'PRICE_VOLUME_BEARISH' | 'PRICE_VOLUME_CONFLICT'
+        const title = latestCtx.title || '量價觀察';
+        const summaryText = latestCtx.summary || '';
+        const volRatio = latestCtx.volume_ratio;
+        const keyHigh = latestCtx.key_high;
+        const keyLow = latestCtx.key_low;
+
+        if (posture === 'PRICE_VOLUME_BULLISH') {
+          badge.textContent = `🔴 ${title}`;
+          badge.style.color = 'var(--up-color)';
+          badge.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+        } else if (posture === 'PRICE_VOLUME_BEARISH') {
+          badge.textContent = `🟢 ${title}`;
+          badge.style.color = 'var(--down-color)';
+          badge.style.backgroundColor = 'rgba(34, 197, 94, 0.15)';
+        } else if (posture === 'PRICE_VOLUME_CONFLICT') {
+          badge.textContent = `🟡 ${title}`;
+          badge.style.color = 'var(--badge-watch)';
+          badge.style.backgroundColor = 'rgba(245, 158, 11, 0.15)';
+        } else {
+          badge.textContent = `⚪ ${title}`;
+          badge.style.color = 'var(--accent)';
+          badge.style.backgroundColor = 'rgba(56, 189, 248, 0.15)';
+        }
+
+        summary.textContent = summaryText;
+        const volStr = typeof volRatio === 'number' ? `量比: ${volRatio.toFixed(2)}x` : '量比: --';
+        const keyHighStr = typeof keyHigh === 'number' ? `關鍵高: ${keyHigh.toFixed(1)}` : '';
+        const keyLowStr = typeof keyLow === 'number' ? `關鍵低: ${keyLow.toFixed(1)}` : '';
+        metrics.textContent = [volStr, keyHighStr, keyLowStr].filter(Boolean).join(' | ');
+      }
+
+      syncSignals(currentTimestamp) {
+        const eventsSource = this.candidateEventsData || this.marketEventsData || this.signalsData;
+        const candidateMode = Boolean(this.candidateEventsData && Array.isArray(this.candidateEventsData.events));
+        if (!eventsSource || !Array.isArray(eventsSource.events)) {
+          this.signalEmptyState.style.display = 'block';
+          this.signalEmptyState.textContent = '候選事件尚未載入';
+          return;
+        }
+
+        const triggeredEvents = eventsSource.events.filter(
+          event => event.timestamp <= currentTimestamp
+        );
+
+        if (triggeredEvents.length === 0) {
+          this.signalEmptyState.style.display = 'block';
+          this.signalEmptyState.textContent = candidateMode ? '⚪ 目前尚未形成候選事件。' : '⚪ 目前無盤勢事件。';
+          this.signalContainer.innerHTML = '';
+          return;
+        }
+
+        this.signalEmptyState.style.display = 'none';
+
+        const latestEvent = triggeredEvents[triggeredEvents.length - 1];
+        const eventKey = `${latestEvent.timestamp}|${latestEvent.kind || latestEvent.type || latestEvent.signal}`;
+
+        if (eventKey !== this.lastEventKey) {
+          const cardHtml = candidateMode ? this.createCandidateEventCard(latestEvent) : this.createMarketEventCard(latestEvent);
+          this.signalContainer.insertAdjacentHTML('afterbegin', cardHtml);
+          this.lastEventKey = eventKey;
+        }
+      }
+
+      createCandidateEventCard(event) {
+        const time = event.timestamp.split('T')[1].substring(0, 8);
+        const invalidated = event.kind === 'EXIT_CANDIDATE_TRIGGERED';
+        const accent = invalidated ? 'var(--down-color)' : 'var(--up-color)';
+        const state = invalidated ? '候選失效' : '候選成立';
+        return `
+          <div class="signal-card" style="border-left-color: ${accent};">
+            <div class="signal-header">
+              <span class="signal-name"><span class="badge-sev" style="background-color: rgba(255,255,255,0.1); color: ${accent};">${state}｜${event.title}</span></span>
+              <span class="signal-time">⏱️ ${time}</span>
+            </div>
+            <div class="signal-reason">${event.summary}</div>
+            <div class="signal-metrics">收盤: <strong>${Number(event.close).toFixed(1)}</strong> | 觸發價: <strong>${Number(event.breakout_level).toFixed(1)}</strong> | 失效價: <strong>${Number(event.invalidation_price).toFixed(1)}</strong> | VWAP: <strong>${Number(event.vwap).toFixed(1)}</strong> | 量比: <strong>${Number(event.volume_ratio).toFixed(2)}x</strong></div>
+          </div>
+        `;
+      }
+
+      createMarketEventCard(event) {
+        const time = event.timestamp.split('T')[1].substring(0, 8);
+        const type = event.type || event.signal;
+        const title = event.title || type;
+        const summary = event.summary || event.reason || '';
+        
+        let cardClass = 'WATCH';
+        let badgeColor = 'var(--badge-watch)';
+        
+        if (type.startsWith('BREAKOUT_') || type === 'SELL_PRESSURE_RELEASED') {
+          cardClass = 'WATCH';
+          badgeColor = '#fbbf24';
+        } else if (type.includes('SELL') || type.includes('CAUTION') || type.includes('FAIL')) {
+          cardClass = 'CAUTION';
+          badgeColor = 'var(--badge-caution)';
+        } else if (type.includes('RELEASED') || type.includes('CONTINUES')) {
+          cardClass = 'INFO';
+          badgeColor = 'var(--up-color)';
+        }
+
+        // 查找同時間的 context 資訊
+        let contextHtml = '';
+        if (this.marketContextData && Array.isArray(this.marketContextData.contexts)) {
+          const matchedCtx = this.marketContextData.contexts.find(c => c.timestamp === event.timestamp);
+          if (matchedCtx) {
+            const ctxPostureTitle = matchedCtx.title || matchedCtx.posture;
+            const vr = typeof matchedCtx.volume_ratio === 'number' ? `量比: ${matchedCtx.volume_ratio.toFixed(2)}x` : '';
+            const kh = typeof matchedCtx.key_high === 'number' ? `關鍵高: ${matchedCtx.key_high.toFixed(1)}` : '';
+            const kl = typeof matchedCtx.key_low === 'number' ? `關鍵低: ${matchedCtx.key_low.toFixed(1)}` : '';
+            const cp = matchedCtx.close_position !== null && matchedCtx.close_position !== undefined 
+              ? `收盤位: ${(matchedCtx.close_position * 100).toFixed(0)}%` 
+              : `收盤位置: 不適用`;
+            
+            const ctxItems = [ctxPostureTitle, vr, kh, kl, cp].filter(Boolean).join(' | ');
+            contextHtml = `<div class="signal-metrics" style="margin-top: 6px; border-top: 1px dashed var(--card-border); padding-top: 4px; color: #93c5fd;"><strong>脈絡依據：</strong>${ctxItems}</div>`;
+          }
+        }
+
+        let metricsStr = '';
+        if (event.metrics) {
+          metricsStr = Object.entries(event.metrics)
+            .map(([k, v]) => `<span>${k}: <strong>${typeof v === 'number' ? v.toFixed(2) : v}</strong></span>`)
+            .join(' | ');
+        }
+
+        return `
+          <div class="signal-card ${cardClass}" style="border-left-color: ${badgeColor};">
+            <div class="signal-header">
+              <span class="signal-name">
+                <span class="badge-sev" style="background-color: rgba(255,255,255,0.1); color: ${badgeColor};">${title}</span>
+              </span>
+              <span class="signal-time">⏱️ ${time}</span>
+            </div>
+            <div class="signal-reason">${summary}</div>
+            ${metricsStr ? `<div class="signal-metrics">${metricsStr}</div>` : ''}
+            ${contextHtml}
+          </div>
+        `;
+      }
+
+      updateProgress() {
+        const total = this.session.bars ? this.session.bars.length : 0;
+        const current = this.currentIndex + 1;
+        const pct = total > 0 ? ((current / total) * 100).toFixed(0) : 0;
+        this.progressBar.style.width = `${pct}%`;
+        this.progressText.textContent = `${current} / ${total} (${pct}%)`;
+      }
+    }
+
+    async function loadJsonSafe(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) return null;
+        return await response.json();
+      } catch {
+        return null;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // 1. 載入回放 K 棒資料
+      let sessionData = window.replaySession;
+      if (!sessionData) {
+        sessionData = await loadJsonSafe('../data/replays/3324_2026-08-28_1m.json') || mockReplaySession;
+      }
+
+      // 2. 優先載入 market-events 資料
+      let marketEventsData = window.marketEventsData;
+      if (!marketEventsData) {
+        marketEventsData = await loadJsonSafe('../data/market-events/3324_2026-08-28_1m.json');
+      }
+
+      // 3. 載入 market-context 資料 (Phase 004)
+      let marketContextData = window.marketContextData;
+      if (!marketContextData) {
+        marketContextData = await loadJsonSafe('../data/market-context/3324_2026-08-28_1m.json');
+      }
+
+      // 4. 載入 pressure-gauge 資料 (Phase 006)
+      let pressureGaugeData = window.pressureGaugeData;
+      if (!pressureGaugeData) {
+        pressureGaugeData = await loadJsonSafe('../data/pressure-gauge/3324_2026-08-28_1m.json');
+      }
+
+      // 5. 載入候選進出場事件（Phase 007）
+      let candidateEventsData = window.candidateEventsData;
+      if (!candidateEventsData) {
+        candidateEventsData = await loadJsonSafe('../data/candidate-events/3324_2026-08-28_1m.json');
+      }
+
+      // 6. 次選載入 signalsData 作為相容 fallback
+      let signalsData = window.signalsData;
+      if (!signalsData && !marketEventsData) {
+        signalsData = await loadJsonSafe('../data/signals/3324_2026-08-28_1m.json');
+      }
+
+      const dashboard = new ReplayDashboard(sessionData, signalsData);
+      dashboard.marketEventsData = marketEventsData;
+      dashboard.marketContextData = marketContextData;
+      dashboard.pressureGaugeData = pressureGaugeData;
+      dashboard.candidateEventsData = candidateEventsData;
+
+      // 更新狀態列來源說明：同時揭露 market-events, market-context 與 pressure-gauge
+      const eventCount = marketEventsData?.events?.length || 0;
+      const contextCount = marketContextData?.contexts?.length || 0;
+      const gaugeCount = pressureGaugeData?.readings?.length || 0;
+      const candidateCount = candidateEventsData?.events?.length || 0;
+
+      const sources = [];
+      if (eventCount > 0) sources.push(`events (${eventCount} 筆)`);
+      if (contextCount > 0) sources.push(`context (${contextCount} 筆)`);
+      if (gaugeCount > 0) sources.push(`gauge (${gaugeCount} 筆)`);
+      if (candidateCount > 0) sources.push(`candidates (${candidateCount} 筆)`);
+
+      if (sources.length > 0) {
+        document.getElementById('signalStatus').textContent = `已載入 ${sources.join(' ＋ ')}`;
+      } else if (signalsData) {
+        document.getElementById('signalStatus').textContent = `已載入 signals (${signalsData.events?.length || 0} 筆)`;
+      } else {
+        document.getElementById('signalStatus').textContent = `訊號資料尚未載入`;
+      }
+
+      window.dashboardApp = dashboard;
+    });
+  </script>
+</body>
+</html>

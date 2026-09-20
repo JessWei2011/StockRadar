@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stock-radar"
+version = "0.1.0"
+description = "Read-only intraday signal radar for a small Taiwan-stock watchlist."
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0",
+  "shioaji>=1.2",
+  "winotify>=1.1"
+]
+
+[project.scripts]
+stock-radar-simulation-check = "stock_radar.simulation_check:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

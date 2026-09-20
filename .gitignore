@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+.deps/
+venv/
+.venv/
+env/
+
+# Logs & Process IDs
+*.log
+*.pid
+data/*.log
+data/*.pid
+
+# Shioaji runtime & cache
+.shioaji-runtime/
+data/.shioaji-runtime/
+
+# Live ephemeral state
+data/live/
+data/monitoring-status.json
+
+# OS metadata
+.DS_Store
+Thumbs.db

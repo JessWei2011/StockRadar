@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0",
+  "symbol": "3324",
+  "market_date": "2026-08-28",
+  "timeframe": "1m",
+  "events": [
+    {
+      "timestamp": "2026-08-28T09:46:00+08:00",
+      "type": "BREAKOUT_OCCURRED",
+      "title": "突破發生",
+      "summary": "收盤突破前 20 根高點，且出現放量。",
+      "metrics": {
+        "breakout_level": 1120.0,
+        "volume_ratio": 6.67
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:48:00+08:00",
+      "type": "SELL_PRESSURE_OCCURRED",
+      "title": "賣壓發生",
+      "summary": "爆量收黑且收盤接近本根低點。",
+      "metrics": {
+        "sell_high": 1125.0,
+        "sell_low": 1120.0,
+        "volume_ratio": 2.59
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:57:00+08:00",
+      "type": "SELL_PRESSURE_RELEASED",
+      "title": "賣壓解除／重新轉強",
+      "summary": "連續 3 根收盤站回賣壓 K 高點 1125.0。",
+      "metrics": {
+        "sell_high": 1125.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:12:00+08:00",
+      "type": "BREAKOUT_OCCURRED",
+      "title": "突破發生",
+      "summary": "收盤突破前 20 根高點，且出現放量。",
+      "metrics": {
+        "breakout_level": 1135.0,
+        "volume_ratio": 14.26
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:16:00+08:00",
+      "type": "BREAKOUT_CONTINUES",
+      "title": "突破延續",
+      "summary": "收盤再創突破後新高，仍高於突破價 1135.0。",
+      "metrics": {
+        "breakout_level": 1135.0,
+        "close": 1155.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:40:00+08:00",
+      "type": "SELL_PRESSURE_OCCURRED",
+      "title": "賣壓發生",
+      "summary": "爆量收黑且收盤接近本根低點。",
+      "metrics": {
+        "sell_high": 1135.0,
+        "sell_low": 1130.0,
+        "volume_ratio": 9.38
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:58:00+08:00",
+      "type": "SELL_PRESSURE_CONTINUES",
+      "title": "賣壓延續",
+      "summary": "收盤跌破賣壓 K 低點 1130.0。",
+      "metrics": {
+        "sell_low": 1130.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:40:00+08:00",
+      "type": "SELL_PRESSURE_RELEASED",
+      "title": "賣壓解除／重新轉強",
+      "summary": "連續 3 根收盤站回賣壓 K 高點 1135.0。",
+      "metrics": {
+        "sell_high": 1135.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:48:00+08:00",
+      "type": "SELL_PRESSURE_OCCURRED",
+      "title": "賣壓發生",
+      "summary": "爆量收黑且收盤接近本根低點。",
+      "metrics": {
+        "sell_high": 1145.0,
+        "sell_low": 1140.0,
+        "volume_ratio": 6.73
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:01:00+08:00",
+      "type": "SELL_PRESSURE_CONTINUES",
+      "title": "賣壓延續",
+      "summary": "收盤跌破賣壓 K 低點 1140.0。",
+      "metrics": {
+        "sell_low": 1140.0
+      }
+    }
+  ]
+}

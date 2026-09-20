@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockRadar 五檔即時監控</title>
+  <style>
+    :root {
+      --bg: #070b13;
+      --card-bg: #0d1527;
+      --card-header: #131f38;
+      --border: #1e293b;
+      --border-light: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --dark-muted: #64748b;
+      --up: #f87171;
+      --up-bg: rgba(239, 68, 68, 0.15);
+      --down: #34d399;
+      --down-bg: rgba(52, 211, 153, 0.15);
+      --warn: #fbbf24;
+      --warn-bg: rgba(251, 191, 36, 0.15);
+      --accent: #38bdf8;
+    --replay: #a855f7;
+      --zoom: 1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; width: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg); color: var(--text); overflow: hidden;
+    }
+
+    .app-container {
+      display: flex; flex-direction: column;
+      zoom: var(--zoom);
+      height: calc(100vh / var(--zoom));
+      width: calc(100vw / var(--zoom));
+      padding: 6px; gap: 6px;
+    }
+
+    /* Top Bar */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 5px;
+      padding: 4px 12px; height: 38px; flex-shrink: 0; white-space: nowrap;
+    }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; white-space: nowrap; }
+    .brand span { color: var(--accent); }
+    
+    .top-controls { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+    
+    /* Mode Buttons */
+    .mode-btn {
+      display: flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px;
+      background: #1e293b; border: 1px solid var(--border-light); color: var(--muted);
+      font-size: 0.74rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .mode-btn:hover { color: var(--text); }
+    .mode-btn.active-sim { background: var(--accent); color: #070b13; border-color: var(--accent); box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+    .mode-btn.active-replay { background: var(--replay); color: #fff; border-color: var(--replay); box-shadow: 0 0 8px rgba(168, 85, 247, 0.6); }
+    .mode-btn.monitoring-on { background: #166534; color: #f0fdf4; border-color: #22c55e; }
+    .mode-btn:disabled { cursor: wait; opacity: 0.65; }
+
+    .ctrl-btn {
+      display: flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 3px;
+      background: #1e293b; border: 1px solid var(--border-light); color: var(--text);
+      font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
+    }
+    .ctrl-btn:hover { background: #334155; }
+    .ctrl-btn.paused { background: #f59e0b; color: #070b13; border-color: #f59e0b; }
+
+    /* 3 Zoom Scales (100%, 110%, 125%) */
+    .zoom-group {
+      display: flex; align-items: center; gap: 2px; background: #070b13;
+      padding: 2px 4px; border-radius: 4px; border: 1px solid var(--border-light);
+    }
+    .zoom-label { font-size: 0.7rem; color: var(--muted); margin-right: 2px; }
+    .zoom-btn {
+      background: transparent; border: none; color: var(--muted);
+      padding: 2px 6px; border-radius: 3px; font-size: 0.72rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .zoom-btn:hover { color: var(--text); }
+    .zoom-btn.active { background: var(--accent); color: #070b13; }
+
+    .threshold-ctrl { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .threshold-ctrl input {
+      width: 44px; padding: 1px 4px; background: #070b13; border: 1px solid var(--border-light);
+      border-radius: 3px; color: var(--text); font-size: 0.78rem; text-align: center;
+    }
+    .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; margin-right: 4px; box-shadow: 0 0 6px #22c55e; }
+    .status-dot.sim { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+    .status-dot.stale { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+    .status-dot.replay { background: var(--replay); box-shadow: 0 0 6px var(--replay); }
+
+    /* Replay Timeline Bar */
+    .replay-bar {
+      display: none; align-items: center; justify-content: space-between;
+      background: #120e24; border: 1px solid #3b2064; border-radius: 5px;
+      padding: 3px 12px; height: 32px; flex-shrink: 0; font-size: 0.75rem; color: #e9d5ff; gap: 12px;
+    }
+    .replay-bar.show { display: flex; }
+    .replay-slider-container { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+    .replay-slider { flex: 1; accent-color: var(--replay); cursor: pointer; }
+    .speed-select { background: #1f1638; color: #fff; border: 1px solid #4c2882; border-radius: 3px; padding: 1px 4px; font-size: 0.72rem; }
+
+    /* Main Dynamic Centered Grid */
+    .main-grid {
+      display: grid;
+      gap: 6px;
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      margin: 0 auto;
+      transition: all 0.25s ease;
+    }
+    .main-grid.cols-1 { grid-template-columns: minmax(0, 420px); justify-content: center; }
+    .main-grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 380px)); justify-content: center; }
+    .main-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 340px)); justify-content: center; }
+    .main-grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); justify-content: stretch; }
+    .main-grid.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); justify-content: stretch; }
+
+    /* Modal Backdrop & Card */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
+      z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-card {
+      background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+      width: 100%; max-width: 540px; max-height: 90vh;
+      display: flex; flex-direction: column;
+      padding: 16px 18px; box-shadow: 0 16px 36px rgba(0,0,0,0.7);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px; flex-shrink: 0;
+    }
+    .modal-header h3 { font-size: 0.95rem; color: #fff; font-weight: 700; }
+    .modal-close-btn { background: none; border: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; }
+    .modal-close-btn:hover { color: #fff; }
+    
+    .modal-body {
+      flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px;
+    }
+    /* Stock Search & Add Bar */
+    .stock-search-row { display: flex; gap: 6px; margin-bottom: 4px; }
+    .stock-search-input {
+      flex: 1; background: #070b13; border: 1px solid var(--border-light);
+      border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 0.85rem; font-weight: 700;
+      outline: none; font-family: monospace;
+    }
+    .stock-search-input:focus { border-color: var(--accent); box-shadow: 0 0 6px rgba(56, 189, 248, 0.4); }
+    .add-symbol-btn {
+      background: #0284c7; border: 1px solid #38bdf8; color: #fff;
+      border-radius: 4px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .add-symbol-btn:hover { background: #0369a1; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+
+    /* Active Stock Order Cards */
+    .active-stock-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #1e293b; border: 1px solid #334155; border-radius: 5px;
+      padding: 6px 10px; font-size: 0.78rem; transition: all 0.15s; gap: 8px;
+    }
+    .active-stock-card:hover { border-color: #475569; }
+    .col-num-badge {
+      font-size: 0.65rem; font-weight: 800; color: var(--accent);
+      background: #0f172a; padding: 2px 6px; border-radius: 3px; border: 1px solid #334155; white-space: nowrap;
+    }
+    .stock-info-main { display: flex; align-items: baseline; gap: 6px; flex: 1; min-width: 0; }
+    .stock-name-title { font-weight: 800; color: #fff; font-size: 0.88rem; white-space: nowrap; }
+    .stock-code-sub { font-size: 0.72rem; color: #94a3b8; font-family: monospace; }
+    .stock-ref-sub { font-size: 0.68rem; color: #64748b; }
+    .order-btn-group { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .order-btn {
+      background: #0f172a; border: 1px solid #475569; color: #cbd5e1;
+      border-radius: 3px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; transition: all 0.15s;
+    }
+    .order-btn:hover { background: #334155; color: #fff; border-color: var(--accent); }
+    .order-btn:disabled { opacity: 0.25; cursor: default; }
+    .remove-stock-btn {
+      background: #450a0a; border: 1px solid #991b1b; color: #fca5a5;
+      border-radius: 3px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; transition: all 0.15s;
+    }
+    .remove-stock-btn:hover { background: #ef4444; color: #fff; }
+
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 8px;
+      margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e293b;
+      flex-shrink: 0;
+    }
+    .modal-cancel-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; border-radius: 4px; padding: 5px 14px; font-size: 0.78rem; cursor: pointer; }
+    .modal-cancel-btn:hover { color: #fff; background: #334155; }
+    .modal-save-btn { background: var(--accent); border: 1px solid var(--accent); color: #070b14; border-radius: 4px; padding: 5px 18px; font-weight: 700; font-size: 0.78rem; cursor: pointer; }
+    .modal-save-btn:hover { box-shadow: 0 0 8px rgba(56, 189, 248, 0.6); }
+
+    /* Symbol Card */
+    .symbol-col {
+      display: flex; flex-direction: column;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 5px;
+      overflow: hidden; min-height: 0;
+    }
+
+    /* Column Header */
+    .col-header {
+      background: var(--card-header); padding: 6px 8px;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .title-row { display: flex; justify-content: space-between; align-items: center; white-space: nowrap; gap: 4px; }
+    .symbol-name { font-size: 0.88rem; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .symbol-name.clickable {
+      cursor: pointer; border-radius: 3px; padding: 1px 4px; transition: all 0.15s;
+    }
+    .symbol-name.clickable:hover {
+      background: #1e293b; color: var(--accent);
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+    }
+    
+    /* Card Title Shift Buttons */
+    .shift-btns { display: flex; align-items: center; gap: 2px; }
+    .shift-btn {
+      background: #111a2e; border: 1px solid #1e293b; color: #94a3b8;
+      border-radius: 2px; padding: 1px 4px; font-size: 0.62rem; cursor: pointer;
+      transition: all 0.15s; line-height: 1;
+    }
+    .shift-btn:hover { background: var(--accent); color: #070b14; border-color: var(--accent); }
+    .shift-btn:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
+
+    .header-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+    .card-threshold-btn {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: #090f1d; border: 1px solid #334155;
+      border-radius: 3px; padding: 2px 5px; font-size: 0.65rem; font-weight: 700;
+      color: var(--accent); cursor: pointer; transition: all 0.15s;
+    }
+    .card-threshold-btn:hover {
+      background: #1e293b; border-color: var(--accent); color: #fff;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+    }
+    .update-time { font-size: 0.65rem; color: var(--muted); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+    
+    .disp-warn-icon {
+      display: inline-block;
+      font-size: 0.82rem;
+      cursor: help;
+      user-select: none;
+      margin: 0 4px;
+      line-height: 1;
+    }
+
+    .price-row { display: flex; justify-content: space-between; align-items: baseline; margin-top: 3px; white-space: nowrap; }
+    .current-price { font-size: 1.18rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .price-change { font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .price-up { color: var(--up); }
+    .price-down { color: var(--down); }
+    .price-flat { color: var(--muted); }
+
+    /* Lamp Badge Bar (三燈號: 掃貨 / 倒貨 / 承接) */
+    .lamp-bar {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;
+      padding: 4px 6px; background: #090f1d; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .lamp-badge {
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+      padding: 3px 1px; border-radius: 3px; font-size: 0.68rem; font-weight: 700;
+      background: #111a2e; color: #475569; border: 1px solid #1e293b;
+      white-space: nowrap; transition: all 0.2s ease;
+    }
+    /* 🔴 掃貨 4 階漸層燈號 (紅 -> 橙紅 -> 金紅 -> 金虹極光) */
+    .lamp-badge.buy-tier-1 {
+      background: linear-gradient(135deg, #dc2626, #991b1b);
+      color: #fff; border-color: #fca5a5;
+      box-shadow: 0 0 8px rgba(220, 38, 38, 0.7);
+      animation: flash-buy-1 0.7s infinite alternate;
+    }
+    .lamp-badge.buy-tier-2 {
+      background: linear-gradient(135deg, #ef4444, #ea580c);
+      color: #fff; border-color: #fdba74;
+      box-shadow: 0 0 11px rgba(234, 88, 12, 0.85);
+      animation: flash-buy-2 0.55s infinite alternate;
+    }
+    .lamp-badge.buy-tier-3 {
+      background: linear-gradient(135deg, #f97316, #eab308);
+      color: #070b14; font-weight: 900; border-color: #fef08a;
+      box-shadow: 0 0 15px rgba(234, 179, 8, 0.95), inset 0 0 4px #fff;
+      animation: flash-buy-3 0.45s infinite alternate;
+    }
+    .lamp-badge.buy-tier-4 {
+      background: linear-gradient(135deg, #ff0055, #f59e0b, #eab308, #ec4899);
+      background-size: 200% 200%;
+      color: #fff; font-weight: 900; border-color: #fff;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 10px rgba(255, 0, 128, 0.8), inset 0 0 6px #fff;
+      animation: flash-buy-rainbow 0.35s infinite alternate, rainbow-bg 2s infinite linear;
+    }
+
+    /* 🟢 倒貨 4 階漸層燈號 (綠 -> 亮翠綠 -> 綠金 -> 金綠極光) */
+    .lamp-badge.sell-tier-1 {
+      background: linear-gradient(135deg, #16a34a, #166534);
+      color: #fff; border-color: #86efac;
+      box-shadow: 0 0 8px rgba(22, 163, 74, 0.7);
+      animation: flash-sell-1 0.7s infinite alternate;
+    }
+    .lamp-badge.sell-tier-2 {
+      background: linear-gradient(135deg, #22c55e, #059669);
+      color: #fff; border-color: #a7f3d0;
+      box-shadow: 0 0 11px rgba(16, 185, 129, 0.85);
+      animation: flash-sell-2 0.55s infinite alternate;
+    }
+    .lamp-badge.sell-tier-3 {
+      background: linear-gradient(135deg, #10b981, #84cc16);
+      color: #070b14; font-weight: 900; border-color: #d9f99d;
+      box-shadow: 0 0 15px rgba(132, 204, 22, 0.95), inset 0 0 4px #fff;
+      animation: flash-sell-3 0.45s infinite alternate;
+    }
+    .lamp-badge.sell-tier-4 {
+      background: linear-gradient(135deg, #059669, #10b981, #84cc16, #eab308);
+      background-size: 200% 200%;
+      color: #070b14; font-weight: 900; border-color: #fff;
+      box-shadow: 0 0 20px rgba(163, 230, 53, 1), 0 0 10px rgba(234, 179, 8, 0.9), inset 0 0 6px #fff;
+      animation: flash-sell-gold 0.35s infinite alternate, rainbow-bg 2s infinite linear;
+    }
+
+    /* 🛡️ 承接 2 階漸層燈號 (橘色觀察中 -> 亮金橘色成立) */
+    .lamp-badge.watching-acc {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff; border-color: #fde68a;
+      box-shadow: 0 0 9px rgba(217, 119, 6, 0.8);
+      animation: flash-acc-watch 0.8s infinite alternate;
+    }
+    .lamp-badge.active-acc {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24, #f59e0b, #d97706);
+      background-size: 200% 200%;
+      color: #070b14; font-weight: 900; border-color: #fff;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 1), 0 0 10px rgba(251, 191, 36, 0.95), inset 0 0 5px #fff;
+      animation: flash-acc-gold 0.4s infinite alternate, rainbow-bg 2s infinite linear;
+    }
+
+    @keyframes flash-acc-watch { from { opacity: 0.65; } to { opacity: 1; } }
+    @keyframes flash-acc-gold { from { opacity: 0.8; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+
+    @keyframes flash-buy-1 { from { opacity: 0.6; } to { opacity: 1; } }
+    @keyframes flash-buy-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+    @keyframes flash-buy-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+    @keyframes flash-buy-rainbow { from { opacity: 0.85; transform: scale(0.96); } to { opacity: 1; transform: scale(1.04); } }
+
+    @keyframes flash-sell-1 { from { opacity: 0.6; } to { opacity: 1; } }
+    @keyframes flash-sell-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+    @keyframes flash-sell-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+    @keyframes flash-sell-gold { from { opacity: 0.85; transform: scale(0.96); } to { opacity: 1; transform: scale(1.04); } }
+
+    @keyframes rainbow-bg {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* 水溫表動能計區塊 (Water Gauge & Order Flow) */
+    .col-gauge-section {
+      display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+      background: #0b1220; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .mini-gauge-shell {
+      display: flex; align-items: center; gap: 3px; flex-shrink: 0;
+    }
+    .mini-gauge-scale {
+      height: 64px; display: flex; flex-direction: column; justify-content: space-between;
+      color: var(--muted); font-size: 0.55rem; text-align: right; line-height: 1; font-variant-numeric: tabular-nums;
+    }
+    .mini-gauge {
+      position: relative; width: 18px; height: 64px; overflow: hidden;
+      border: 1.5px solid #475569; border-radius: 9px; background: #070b14; flex-shrink: 0;
+    }
+    .mini-zero { position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: #94a3b8; z-index: 2; }
+    .mini-liquid { position: absolute; left: 2px; right: 2px; height: 0; transition: height 350ms cubic-bezier(.4,0,.2,1); }
+    .mini-liquid.up { bottom: 50%; background: linear-gradient(to top, #ef4444, #f87171); border-radius: 2px 2px 0 0; }
+    .mini-liquid.down { top: 50%; background: linear-gradient(to bottom, #10b981, #34d399); border-radius: 0 0 2px 2px; }
+
+    .gauge-info {
+      flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+      font-size: 0.65rem; color: var(--muted); font-variant-numeric: tabular-nums;
+    }
+    .gauge-net-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .gauge-net { font-size: 0.88rem; font-weight: 800; }
+    .gauge-net.up { color: var(--up); }
+    .gauge-net.down { color: var(--down); }
+    .gauge-net.flat { color: var(--muted); }
+    .gauge-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gauge-sub b { font-weight: 700; }
+    .acc-note {
+      font-size: 0.63rem; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Live Tape (大單流水) */
+    .tape-container {
+      flex: 1; display: flex; flex-direction: column; min-height: 0; background: #090f1d;
+    }
+    .tape-head {
+      display: grid; grid-template-columns: 46px 36px 1fr 40px 32px;
+      padding: 3px 6px; font-size: 0.64rem; color: var(--muted); background: #0e172a;
+      border-bottom: 1px solid var(--border); flex-shrink: 0; white-space: nowrap;
+    }
+    .tape-list {
+      flex: 1; overflow-y: auto; font-size: 0.68rem; font-variant-numeric: tabular-nums;
+    }
+    .tape-list::-webkit-scrollbar { width: 3px; }
+    .tape-list::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+
+    .tape-row {
+      display: grid; grid-template-columns: 46px 36px 1fr 40px 32px;
+      align-items: center; padding: 3px 6px; border-bottom: 1px solid #111a2e;
+      white-space: nowrap;
+    }
+    .tape-row:nth-child(even) { background: rgba(255,255,255,0.015); }
+    .tape-time { color: var(--muted); font-size: 0.62rem; }
+    .tape-side {
+      font-size: 0.60rem; font-weight: 700; padding: 1px 3px; border-radius: 2px; text-align: center;
+      display: inline-block; width: fit-content;
+    }
+    .tape-side.buy { background: var(--up-bg); color: var(--up); }
+    .tape-side.sell { background: var(--down-bg); color: var(--down); }
+    
+    /* 買一/賣一 暗色價位欄 */
+    .tape-bidask {
+      text-align: center; font-size: 0.62rem; color: var(--dark-muted); font-variant-numeric: tabular-nums;
+    }
+    .tape-price { text-align: right; padding-right: 3px; font-weight: 600; }
+    .tape-price.buy { color: var(--up); }
+    .tape-price.sell { color: var(--down); }
+    .tape-vol { text-align: right; font-weight: 700; }
+    .tape-vol.buy { color: var(--up); }
+    .tape-vol.sell { color: var(--down); }
+    .tape-empty { text-align: center; padding: 24px 4px; color: #475569; font-size: 0.68rem; }
+  </style>
+</head>
+<body>
+  <div class="app-container" id="appContainer">
+    <!-- Slim Top Header -->
+    <header class="topbar">
+      <div class="brand">
+        🎯 <span>StockRadar</span> 五檔即時盤中雷達
+      </div>
+      <div class="top-controls">
+        <!-- Replay & Pause Controls -->
+        <button id="monitoringToggle" class="mode-btn" title="開始或停止 Shioaji 即時行情訂閱">▶️ 開始監控</button>
+        <button id="replayBtn" class="mode-btn" title="切換 2026-09-01 今日真實五檔數據回放">🎬 今日回放</button>
+        <button id="pauseBtn" class="ctrl-btn" style="display:none" title="定格畫面以便截圖討論">⏸️ 暫停</button>
+
+        <!-- Custom Symbol Picker Button -->
+        <button id="symbolConfigBtn" class="ctrl-btn" title="自訂監控股票代號與排列順序">⚙️ 自訂選股 (<span id="activeCount">5</span>檔)</button>
+
+        <!-- Mini Floating HUD Button -->
+        <button id="miniHudBtn" class="ctrl-btn" title="開啟右側直式迷你懸浮側欄 (Mini HUD)" onclick="window.open('mini.html', 'StockRadarMini', 'width=220,height=680,resizable=yes,top=40,left=1690')">📌 右側懸浮側欄</button>
+
+        <!-- 3 Zoom Scales (100%, 110%, 125%) -->
+        <div class="zoom-group">
+          <span class="zoom-label">🔍 縮放</span>
+          <button class="zoom-btn active" data-zoom="1">100%</button>
+          <button class="zoom-btn" data-zoom="1.1">110%</button>
+          <button class="zoom-btn" data-zoom="1.25">125%</button>
+        </div>
+
+        <!-- Threshold -->
+        <label class="threshold-ctrl">
+          門檻(張)
+          <input id="minimumVolume" type="number" min="1" step="1" value="10">
+        </label>
+        
+        <!-- Status -->
+        <div>
+          <span id="statusDot" class="status-dot"></span><span id="statusText">載入中...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Real Data Replay Control Toolbar -->
+    <div id="replayBar" class="replay-bar">
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-weight:700;">📅 2026-09-01 今日回放</span>
+        <button id="replayPlayPause" class="ctrl-btn">⏸️ 暫停</button>
+        <button id="replayStep" class="ctrl-btn">⏩ 步進(+1m)</button>
+        <select id="replaySpeed" class="speed-select">
+          <option value="1" selected>1x (即時)</option>
+          <option value="5">5x (快進)</option>
+          <option value="20">20x (極速)</option>
+          <option value="60">60x (超光速)</option>
+        </select>
+      </div>
+      <div class="replay-slider-container">
+        <span id="replayTimeLabel" style="font-family:monospace; font-weight:700;">09:00:00</span>
+        <input id="replaySlider" class="replay-slider" type="range" min="0" max="269" value="0">
+        <span id="replayProgress" style="font-size:0.7rem; color:#d8b4fe;">1/270 分</span>
+      </div>
+    </div>
+
+    <!-- Main 5-Column Display -->
+    <main id="mainGrid" class="main-grid"></main>
+
+    <!-- Human-Friendly Custom Symbol Order Modal -->
+    <div id="symbolModal" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>⚙️ 看盤自訂選股與順序管理</h3>
+          <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- 區塊一：輸入任意 4 碼台股代號 -->
+          <div style="background: #0b1322; border: 1px solid #1e293b; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;">
+            <div style="font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 6px;">🔍 輸入股票代號加入看盤（最多 5 檔）：</div>
+            <div class="stock-search-row">
+              <input id="newSymbolInput" class="stock-search-input" type="text" placeholder="輸入 4 碼代號，例如: 2330、2317、2603..." maxlength="6">
+              <button id="addSymbolBtn" class="add-symbol-btn">➕ 加入</button>
+            </div>
+            <div id="addSymbolStatus" style="font-size: 0.72rem; color: #38bdf8; min-height: 15px; margin-top: 3px;"></div>
+          </div>
+
+          <!-- 區塊二：目前看盤順序列表 (含 ⬆️ 向上 / ⬇️ 向下 / ✖️ 移除 / 個別門檻調整) -->
+          <div style="font-size: 0.75rem; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: baseline;">
+            <span>📋 目前看盤排列順序（由左至右）：</span>
+            <span style="font-size: 0.68rem; color: #64748b;">點擊 ⬆️ ⬇️ 調換 ｜ ✖ 移除</span>
+          </div>
+          <div id="modalActiveStockList" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelModalBtn" class="modal-cancel-btn">取消</button>
+          <button id="saveSymbolsBtn" class="modal-save-btn">確定套用順序</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ids = name => document.getElementById(name);
+    let symbols = ["2455", "3324", "3406", "3450", "4958"];
+    let symbolNames = { "2455": "全新", "3324": "雙鴻", "3406": "玉晶光", "3450": "聯鈞", "4958": "臻鼎-KY" };
+    let symbolReferences = { "2455": 477.0, "3324": 1250.0, "3406": 1005.0, "3450": 646.0, "4958": 500.0 };
+    let symbolDispositions = {};
+    let snapshots = {};
+    
+    let currentMode = 'LIVE';
+    let isPaused = false;
+    let timerId = null;
+    let monitoringStatus = { enabled: false, state: 'UNKNOWN', last_error: null };
+
+    let replaySessions = {};
+    let replayCursor = 0;
+    let replayTotalBars = 270;
+    let replayAskPrints = { "2455": [], "3324": [], "3406": [], "3450": [], "4958": [] };
+    let replayBidPrints = { "2455": [], "3324": [], "3406": [], "3450": [], "4958": [] };
+
+    const thresholdInput = ids('minimumVolume');
+    thresholdInput.value = localStorage.getItem('stockRadarMinimumVolume') || thresholdInput.value;
+
+    const minimumVolume = () => Math.max(1, Number(thresholdInput.value) || 1);
+    const displaySymbol = symbol => symbolNames[symbol] ? `${symbol} ${symbolNames[symbol]}` : symbol;
+
+    // Smart individual thresholds based on stock price
+    function getDefaultThreshold(price) {
+      if (price >= 1000) return 5;    // 高價股 (如雙鴻 1375元, 玉晶光 1005元): 5張 (~500~700萬)
+      if (price >= 300) return 10;    // 中高價 (如全新 524元, 聯鈞 625元, 臻鼎 535元): 10張 (~300~600萬)
+      if (price >= 100) return 20;    // 中價股: 20張
+      return 50;                     // 低價股: 50張
+    }
+
+    let symbolThresholds = {
+      "2455": 10,
+      "3324": 5,
+      "3406": 5,
+      "3450": 10,
+      "4958": 15
+    };
+
+    const savedThresholds = localStorage.getItem('stockRadarSymbolThresholds');
+    if (savedThresholds) {
+      try {
+        symbolThresholds = { ...symbolThresholds, ...JSON.parse(savedThresholds) };
+      } catch {}
+    }
+
+    function getSymbolThreshold(sym, refPrice = 500) {
+      if (symbolThresholds[sym] !== undefined && Number(symbolThresholds[sym]) > 0) {
+        return Number(symbolThresholds[sym]);
+      }
+      return getDefaultThreshold(refPrice);
+    }
+
+    function setSymbolThreshold(sym, val) {
+      const num = Math.max(1, Number(val) || 1);
+      symbolThresholds[sym] = num;
+      localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+      // A card-level edit intentionally leaves the global mode.
+      localStorage.removeItem('stockRadarMinimumVolume');
+    }
+
+    const savedZoom = localStorage.getItem('stockRadarZoom') || '1';
+    function applyZoom(zoomVal) {
+      document.documentElement.style.setProperty('--zoom', zoomVal);
+      localStorage.setItem('stockRadarZoom', zoomVal);
+      document.querySelectorAll('.zoom-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-zoom') === String(zoomVal));
+      });
+    }
+    applyZoom(savedZoom);
+
+    document.querySelectorAll('.zoom-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyZoom(btn.getAttribute('data-zoom'));
+      });
+    });
+
+    thresholdInput.addEventListener('input', () => {
+      const threshold = minimumVolume();
+      thresholdInput.value = String(threshold);
+      localStorage.setItem('stockRadarMinimumVolume', String(threshold));
+      for (const symbol of symbols) {
+        symbolThresholds[symbol] = threshold;
+      }
+      localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+      renderDashboard();
+    });
+
+    async function loadReplayData() {
+      ids('statusText').textContent = `載入自訂 ${symbols.length} 檔真實數據中...`;
+      replayAskPrints = Object.fromEntries(symbols.map(s => [s, []]));
+      replayBidPrints = Object.fromEntries(symbols.map(s => [s, []]));
+      const results = await Promise.all(symbols.map(async sym => {
+        try {
+          const res = await fetch(`../data/replays/${sym}_2026-09-01_1m.json?ts=` + Date.now());
+          if (!res.ok) throw new Error(`找不到 ${sym} 今日回放檔案`);
+          const json = await res.json();
+          return [sym, json.bars || []];
+        } catch (err) {
+          console.warn(err);
+          return [sym, []];
+        }
+      }));
+      replaySessions = Object.fromEntries(results);
+      const lengths = symbols.map(s => (replaySessions[s] || []).length).filter(l => l > 0);
+      replayTotalBars = lengths.length ? Math.min(...lengths) : 270;
+      ids('replaySlider').max = Math.max(0, replayTotalBars - 1);
+      replayCursor = 0;
+    }
+
+    function stepReplayBar(targetIndex = null) {
+      if (targetIndex !== null) {
+        replayCursor = targetIndex;
+      }
+      if (replayCursor >= replayTotalBars) {
+        pauseCurrentMode();
+        ids('statusText').textContent = '🏁 今日回放已全數播畢！';
+        return;
+      }
+
+      let timeStr = '09:00:00';
+      for (const sym of symbols) {
+        const bars = replaySessions[sym];
+        if (!bars || !bars[replayCursor]) continue;
+
+        const currentBar = bars[replayCursor];
+        timeStr = currentBar.timestamp.split('T')[1].slice(0, 8);
+        currentReplayTime = Date.parse(currentBar.timestamp);
+        const openPrice = bars[0].open;
+        const closePrice = currentBar.close;
+        const barVol = currentBar.volume;
+        const tickSize = sym === "3324" ? 5.0 : 0.5;
+        const bidPrice = Number((closePrice - tickSize).toFixed(1));
+        const askPrice = Number(closePrice.toFixed(1));
+        const isBullish = currentBar.close >= currentBar.open;
+
+        if (barVol >= 5) {
+          const pCount = Math.min(4, Math.max(1, Math.floor(barVol / 25)));
+          for (let p = 0; p < pCount; p++) {
+            const pBuy = isBullish ? Math.random() < 0.75 : Math.random() < 0.35;
+            const pVol = Math.max(10, Math.round(barVol / pCount));
+            const print = {
+              timestamp: currentBar.timestamp,
+              price: pBuy ? askPrice : bidPrice,
+              volume: pVol,
+              bid_price: bidPrice,
+              ask_price: askPrice,
+              total_volume: 1000 + barVol
+            };
+            if (pBuy) {
+              replayAskPrints[sym].push(print);
+              if (replayAskPrints[sym].length > 40) replayAskPrints[sym].shift();
+            } else {
+              replayBidPrints[sym].push(print);
+              if (replayBidPrints[sym].length > 40) replayBidPrints[sym].shift();
+            }
+          }
+        }
+
+        const currentSlice = bars.slice(0, replayCursor + 1);
+        const minP = Math.min(...currentSlice.map(b => b.low));
+        const maxP = Math.max(...currentSlice.map(b => b.high));
+        const range = maxP - minP || 1;
+        const pos = (closePrice - minP) / range;
+
+        const askVol = (replayAskPrints[sym] || []).reduce((sum, p) => sum + p.volume, 0);
+        const bidVol = (replayBidPrints[sym] || []).reduce((sum, p) => sum + p.volume, 0);
+        const totVol = askVol + bidVol || 1;
+        const buyRatio = askVol / totVol;
+        const netVol = askVol - bidVol;
+
+        const isAccActive = pos <= 0.40 && buyRatio >= 0.52 && askVol >= 30;
+        const isAccWatching = pos <= 0.40 && !isAccActive;
+        const refPrice = symbolReferences[sym] || openPrice;
+
+        snapshots[sym] = {
+          symbol: sym,
+          latest_bar: currentBar,
+          latest_tick: { timestamp: currentBar.timestamp, price: closePrice, change_percent: ((closePrice - refPrice) / refPrice) * 100 },
+          at_ask_prints: [...replayAskPrints[sym]],
+          at_bid_prints: [...replayBidPrints[sym]],
+          accumulation_signal: {
+            available: true,
+            active: isAccActive,
+            watching: isAccWatching,
+            price_position: pos,
+            net_volume: netVol,
+            buy_ratio: buyRatio
+          }
+        };
+      }
+
+      ids('replayTimeLabel').textContent = timeStr;
+      ids('replaySlider').value = replayCursor;
+      ids('replayProgress').textContent = `${replayCursor + 1}/${replayTotalBars} 分`;
+      renderDashboard();
+
+      if (targetIndex === null) {
+        replayCursor++;
+      }
+    }
+
+    const monitoringToggle = ids('monitoringToggle');
+    const replayBtn = ids('replayBtn');
+    const pauseBtn = ids('pauseBtn');
+    const replayBar = ids('replayBar');
+    const replayPlayPause = ids('replayPlayPause');
+    const replayStep = ids('replayStep');
+    const replaySlider = ids('replaySlider');
+    const replaySpeed = ids('replaySpeed');
+
+    function renderMonitoringControl() {
+      const { enabled, state, last_error: lastError } = monitoringStatus;
+      // A user must always be able to cancel while login/bootstrap is still running.
+      monitoringToggle.disabled = state === 'STOPPING';
+      monitoringToggle.classList.toggle('monitoring-on', enabled);
+      monitoringToggle.textContent = enabled ? '■ 停止監控' : '▶️ 開始監控';
+      monitoringToggle.title = enabled
+        ? '停止 API 訂閱並登出 Shioaji'
+        : '登入並開始訂閱 Shioaji 即時行情';
+      if (lastError) monitoringToggle.title += `\n最近錯誤：${lastError}`;
+    }
+
+    async function refreshMonitoringStatus() {
+      try {
+        const response = await fetch(`/api/monitoring?ts=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('監控服務無回應');
+        monitoringStatus = await response.json();
+      } catch (error) {
+        monitoringStatus = { enabled: false, state: 'UNAVAILABLE', last_error: error.message };
+      }
+      renderMonitoringControl();
+    }
+
+    monitoringToggle.addEventListener('click', async () => {
+      monitoringToggle.disabled = true;
+      try {
+        const response = await fetch('/api/monitoring', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: !monitoringStatus.enabled }),
+        });
+        if (!response.ok) throw new Error('無法更新監控狀態');
+        monitoringStatus = await response.json();
+      } catch (error) {
+        monitoringStatus = { ...monitoringStatus, last_error: error.message };
+      }
+      renderMonitoringControl();
+      await refresh();
+    });
+
+    function getReplayInterval() {
+      const speed = Number(replaySpeed.value) || 5;
+      return Math.max(50, 1000 / speed);
+    }
+
+    function pauseCurrentMode() {
+      isPaused = true;
+      if (timerId) clearInterval(timerId);
+      pauseBtn.classList.add('paused');
+      pauseBtn.textContent = '▶️ 繼續';
+      replayPlayPause.textContent = '▶️ 播放';
+      ids('statusText').textContent = '⏸️ 已暫停 (畫面定格，可截圖)';
+    }
+
+    function resumeCurrentMode() {
+      isPaused = false;
+      pauseBtn.classList.remove('paused');
+      pauseBtn.textContent = '⏸️ 暫停';
+      replayPlayPause.textContent = '⏸️ 暫停';
+
+      if (currentMode === 'REPLAY') {
+        ids('statusText').textContent = '🎬 2026-09-01 真實回放中';
+        timerId = setInterval(stepReplayBar, getReplayInterval());
+      }
+    }
+
+    replayBtn.addEventListener('click', async () => {
+      if (currentMode === 'REPLAY') {
+        currentMode = 'LIVE';
+        replayBtn.classList.remove('active-replay');
+        pauseBtn.style.display = 'none';
+        replayBar.classList.remove('show');
+        ids('statusDot').className = 'status-dot';
+        ids('statusText').textContent = '連線至即時行情...';
+        if (timerId) clearInterval(timerId);
+        refresh();
+      } else {
+        currentMode = 'REPLAY';
+        replayBtn.classList.add('active-replay');
+        replayBar.classList.add('show');
+        pauseBtn.style.display = 'inline-flex';
+        ids('statusDot').className = 'status-dot replay';
+        try {
+          await loadReplayData();
+          resumeCurrentMode();
+        } catch (err) {
+          alert('載入回放數據失敗: ' + err.message);
+        }
+      }
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      if (isPaused) resumeCurrentMode();
+      else pauseCurrentMode();
+    });
+
+    replayPlayPause.addEventListener('click', () => {
+      if (isPaused) resumeCurrentMode();
+      else pauseCurrentMode();
+    });
+
+    replayStep.addEventListener('click', () => {
+      pauseCurrentMode();
+      stepReplayBar();
+    });
+
+    replaySlider.addEventListener('input', () => {
+      pauseCurrentMode();
+      const val = Number(replaySlider.value);
+      stepReplayBar(val);
+    });
+
+    replaySpeed.addEventListener('change', () => {
+      if (currentMode === 'REPLAY' && !isPaused) {
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(stepReplayBar, getReplayInterval());
+      }
+    });
+
+    let currentReplayTime = 0;
+
+    function getEffectiveNow() {
+      if (currentMode === 'REPLAY') return currentReplayTime || Date.now();
+      return Date.now();
+    }
+
+    function getCombinedPrints(snapshot, min = 10) {
+      if (!snapshot) return [];
+      const buys = (snapshot.at_ask_prints || []).filter(p => Number(p.volume) >= min).map(p => ({ ...p, side: 'BUY' }));
+      const sells = (snapshot.at_bid_prints || []).filter(p => Number(p.volume) >= min).map(p => ({ ...p, side: 'SELL' }));
+      return [...buys, ...sells].sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+    }
+
+    function recentPrints(prints, min = 10) {
+      const refTime = getEffectiveNow();
+      return (prints || []).filter(print => {
+        const age = refTime - Date.parse(print.timestamp);
+        return age >= 0 && age <= 20000 && Number(print.volume) >= min;
+      });
+    }
+
+    function getOrderFlow(snapshot, min = 10) {
+      const buys = recentPrints(snapshot?.at_ask_prints, min);
+      const sells = recentPrints(snapshot?.at_bid_prints, min);
+      const buyVol = buys.reduce((sum, p) => sum + Number(p.volume), 0);
+      const sellVol = sells.reduce((sum, p) => sum + Number(p.volume), 0);
+      const net = buyVol - sellVol;
+      const total = buyVol + sellVol;
+      const level = total ? ((buyVol - sellVol) / total) * 100 : 0;
+      return { buyVol, sellVol, net, level };
+    }
+
+    function renderDashboard() {
+      const grid = ids('mainGrid');
+      grid.replaceChildren();
+      const refTime = getEffectiveNow();
+
+      const count = Math.max(1, Math.min(5, symbols.length));
+      grid.className = 'main-grid cols-' + count;
+      if (ids('activeCount')) ids('activeCount').textContent = count;
+
+      const displaySymbols = symbols.slice(0, 5);
+
+      for (const symbol of displaySymbols) {
+        const snapshot = snapshots[symbol];
+        const col = document.createElement('section');
+        col.className = 'symbol-col';
+
+        // 1. Header (Price & Change & Per-Stock Threshold)
+        const tick = snapshot?.latest_tick;
+        const price = tick ? Number(tick.price) : snapshot?.latest_bar ? Number(snapshot.latest_bar.close) : null;
+        const refP = symbolReferences[symbol] || price || 500;
+        let change = tick && tick.change_percent !== null ? Number(tick.change_percent) : null;
+        if (change === null && price !== null && symbolReferences[symbol] > 0) {
+          change = ((price - symbolReferences[symbol]) / symbolReferences[symbol]) * 100;
+        }
+        const timeStr = snapshot?.latest_bar ? snapshot.latest_bar.timestamp.split('T')[1].slice(0, 8) : '--:--:--';
+        const minVol = getSymbolThreshold(symbol, refP);
+
+        let priceClass = 'price-flat', changeText = '--';
+        if (Number.isFinite(change)) {
+          priceClass = change > 0 ? 'price-up' : change < 0 ? 'price-down' : 'price-flat';
+          changeText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
+        }
+
+        const header = document.createElement('div');
+        header.className = 'col-header';
+        const colIdx = displaySymbols.indexOf(symbol);
+        const disp = snapshot?.disposition || symbolDispositions[symbol];
+        const dispWarnIcon = disp ? `<span class="disp-warn-icon" title="⚠️ 本檔為處置股票 (約每2分鐘撮合／預收款券)">⚠️</span>` : '';
+
+        header.innerHTML = `
+          <div class="title-row">
+            <div style="display:flex; align-items:center; gap:5px; min-width:0;">
+              <div class="symbol-name clickable" data-sym="${symbol}" title="點擊直接更換第 ${colIdx + 1} 欄股票">${displaySymbol(symbol)} <span style="font-size:0.65rem; opacity:0.6;">✏️</span></div>
+              <div class="shift-btns">
+                <button class="shift-btn shift-left" data-sym="${symbol}" title="向左移一欄" ${colIdx === 0 ? 'disabled' : ''}>◀</button>
+                <button class="shift-btn shift-right" data-sym="${symbol}" title="向右移一欄" ${colIdx === displaySymbols.length - 1 ? 'disabled' : ''}>▶</button>
+              </div>
+            </div>
+            <div class="header-right">
+              <button class="card-threshold-btn" data-sym="${symbol}" title="點擊修改 ${displaySymbol(symbol)} 的大單門檻">🎯 &ge;${minVol}張 ✏️</button>
+              <div class="update-time">${timeStr}</div>
+            </div>
+          </div>
+          <div class="price-row">
+            <div class="current-price ${priceClass}">${price !== null ? price.toFixed(1) : '--'}</div>
+            ${dispWarnIcon}
+            <div class="price-change ${priceClass}">${changeText}</div>
+          </div>
+        `;
+        col.append(header);
+
+        // Bind Direct Click on Stock Name to Replace Stock
+        const nameBtn = header.querySelector('.symbol-name.clickable');
+        if (nameBtn) {
+          nameBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const input = prompt(`【更換第 ${colIdx + 1} 欄股票】目前為 ${displaySymbol(symbol)}\n請輸入新的 4 碼股票代號 (例如 2330、2317、2603)：`, symbol);
+            if (input !== null) {
+              const newSym = input.trim();
+              if (/^\d{4,6}$/.test(newSym) && newSym !== symbol) {
+                await replaceSymbolAt(colIdx, newSym);
+              }
+            }
+          });
+        }
+
+        // Bind Shift left/right buttons
+        const leftBtn = header.querySelector('.shift-left');
+        const rightBtn = header.querySelector('.shift-right');
+        if (leftBtn) {
+          leftBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moveSymbol(symbol, -1);
+          });
+        }
+        if (rightBtn) {
+          rightBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            moveSymbol(symbol, 1);
+          });
+        }
+
+        // Bind 1-click prompt edit
+        const threshBtn = header.querySelector('.card-threshold-btn');
+        threshBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const input = prompt(`【${displaySymbol(symbol)}】請輸入大單門檻張數 (目前: ${minVol} 張)：`, minVol);
+          if (input !== null) {
+            const parsed = parseInt(input.trim(), 10);
+            if (!isNaN(parsed) && parsed > 0) {
+              setSymbolThreshold(symbol, parsed);
+              renderDashboard();
+            }
+          }
+        });
+
+        // 2. Lamp Bar & 4-Tier Gradient Calculation
+        const flow = getOrderFlow(snapshot, minVol);
+        const askPrints = (snapshot?.at_ask_prints || []).filter(p => Number(p.volume) >= minVol);
+        const bidPrints = (snapshot?.at_bid_prints || []).filter(p => Number(p.volume) >= minVol);
+        const latestBuy = askPrints.at(-1);
+        const latestSell = bidPrints.at(-1);
+        const LAMP_WINDOW_MS = 5000; // 5 秒即時熄燈窗
+        const timeBuy = latestBuy ? Date.parse(latestBuy.timestamp) : 0;
+        const timeSell = latestSell ? Date.parse(latestSell.timestamp) : 0;
+        const hasRecentBuy = latestBuy && (refTime - timeBuy <= LAMP_WINDOW_MS);
+        const hasRecentSell = latestSell && (refTime - timeSell <= LAMP_WINDOW_MS);
+
+        // 取得近 20 秒內最大單筆張數
+        const recentAskVols = (snapshot?.at_ask_prints || [])
+          .filter(p => {
+            const age = refTime - Date.parse(p.timestamp);
+            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
+          })
+          .map(p => Number(p.volume));
+        const maxBuyVol = recentAskVols.length ? Math.max(...recentAskVols) : 0;
+
+        const recentBidVols = (snapshot?.at_bid_prints || [])
+          .filter(p => {
+            const age = refTime - Date.parse(p.timestamp);
+            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
+          })
+          .map(p => Number(p.volume));
+        const maxSellVol = recentBidVols.length ? Math.max(...recentBidVols) : 0;
+
+        // 計算 4 階色階：每超過門檻/2 升一階 (如 50 -> 75 -> 100 -> >100)
+        function calcTier(vol, threshold) {
+          if (vol < threshold) return 0;
+          const step = threshold * 0.5;
+          if (vol > threshold + 2 * step) return 4; // > 2.0T (例如 >100張) ➔ 金虹極光 / 金綠極光
+          if (vol >= threshold + 2 * step) return 3; // = 2.0T (例如 100張) ➔ 金紅 / 綠金
+          if (vol >= threshold + 1 * step) return 2; // >= 1.5T (例如 75張) ➔ 橙紅 / 亮翠綠
+          return 1;                                  // >= 1.0T (例如 50張) ➔ 標準紅 / 標準綠
+        }
+
+        const buyTier = hasRecentBuy ? calcTier(maxBuyVol, minVol) : 0;
+        const sellTier = hasRecentSell ? calcTier(maxSellVol, minVol) : 0;
+
+        const buyTierLabels = ['', '🔴 掃貨', '🔴 掃貨+', '🔥 掃貨!!!', '✨ 掃貨!!!'];
+        const sellTierLabels = ['', '🟢 倒貨', '🟢 倒貨-', '⚡ 倒貨!!!', '⚡ 倒貨!!!'];
+
+        const buyClass = buyTier > 0 ? `buy-tier-${buyTier}` : '';
+        const sellClass = sellTier > 0 ? `sell-tier-${sellTier}` : '';
+        const buyLabel = buyTier > 0 ? buyTierLabels[buyTier] : '🔴 掃貨';
+        const sellLabel = sellTier > 0 ? sellTierLabels[sellTier] : '🟢 倒貨';
+
+        const acc = snapshot?.accumulation_signal;
+        const recentAccBuyCount = (snapshot?.at_ask_prints || []).filter(p => {
+          const age = refTime - Date.parse(p.timestamp);
+          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
+        }).length;
+        const recentAccSellCount = (snapshot?.at_bid_prints || []).filter(p => {
+          const age = refTime - Date.parse(p.timestamp);
+          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
+        }).length;
+        const hasRecentAccAction = recentAccBuyCount > 0 ||
+          (Boolean(acc?.conditions?.sell_absorbed) && recentAccSellCount > 0);
+
+        const accActive = Boolean(acc && acc.active && hasRecentAccAction);
+        const accWatching = Boolean(acc && acc.watching && !acc.active && hasRecentAccAction);
+        const attackConfirmed = Boolean(accActive && acc?.stage === 'ATTACK_CONFIRMED');
+        const accLabel = attackConfirmed ? '⚡ 轉攻擊' : accActive ? '✨ 承接確認' : accWatching ? '🛡️ 承接觀察' : '🛡️ 承接';
+        const accClass = accActive ? 'active-acc' : accWatching ? 'watching-acc' : '';
+
+        const lampBar = document.createElement('div');
+        lampBar.className = 'lamp-bar';
+        lampBar.innerHTML = `
+          <div class="lamp-badge ${buyClass}" title="${buyTier > 0 ? `掃貨 Lv.${buyTier} (近5秒最大單筆: ${maxBuyVol}張)` : '近5秒無掃貨大單'}">${buyLabel}</div>
+          <div class="lamp-badge ${sellClass}" title="${sellTier > 0 ? `倒貨 Lv.${sellTier} (近5秒最大單筆: ${maxSellVol}張)` : '近5秒無倒貨大單'}">${sellLabel}</div>
+          <div class="lamp-badge ${accClass}" title="${attackConfirmed ? '站上 VWAP、放量突破壓力且主動買量占優' : accActive ? '低檔賣壓被吸收，或連續主動買量且守住支撐' : accWatching ? '承接證據仍在形成' : (acc?.active ? '承接結構存在，近5秒暫無新大單' : '無承接訊號')}">${accLabel}</div>
+        `;
+        col.append(lampBar);
+
+        // 3. 水溫表動能計區塊 (Water Gauge & Flow)
+        const gaugeSection = document.createElement('div');
+        gaugeSection.className = 'col-gauge-section';
+
+        const upHeight = Math.max(0, Math.min(100, flow.level)) / 2;
+        const downHeight = Math.max(0, Math.min(100, -flow.level)) / 2;
+        const netClass = flow.net > 0 ? 'up' : flow.net < 0 ? 'down' : 'flat';
+
+        let accText = '承接量能分析中...';
+        if (acc && acc.available) {
+          accText = acc.stage === 'ATTACK_CONFIRMED'
+            ? `轉攻擊確認｜VWAP ${Number(acc.vwap).toFixed(1)}｜突破 ${Number(acc.breakout_level).toFixed(1)}｜量比 ${Number(acc.breakout_volume_ratio).toFixed(2)}x`
+            : acc.active
+            ? `承接確認｜區間 ${(acc.price_position*100).toFixed(0)}%｜${acc.conditions?.sell_absorbed ? '賣壓吸收' : '主動買量占優'}｜淨量 ${acc.net_volume >= 0 ? '+' : ''}${acc.net_volume}`
+            : acc.watching
+              ? `承接觀察｜區間 ${(acc.price_position*100).toFixed(0)}%｜買比 ${(acc.buy_ratio*100).toFixed(0)}%`
+              : `區間 ${(acc.price_position*100).toFixed(0)}%｜承接未確認`;
+        } else if (!snapshot) {
+          accText = '等待快照...';
+        }
+
+        gaugeSection.innerHTML = `
+          <div class="mini-gauge-shell">
+            <div class="mini-gauge-scale">
+              <span>+100</span>
+              <span>0</span>
+              <span>-100</span>
+            </div>
+            <div class="mini-gauge">
+              <div class="mini-liquid up" style="height:${upHeight}%"></div>
+              <div class="mini-liquid down" style="height:${downHeight}%"></div>
+              <div class="mini-zero"></div>
+            </div>
+          </div>
+          <div class="gauge-info">
+            <div class="gauge-net-row">
+              <span class="gauge-net ${netClass}">${flow.net >= 0 ? '+' : ''}${flow.net} <span style="font-size:0.65rem; font-weight:400">淨量</span></span>
+              <span>水位 <b>${flow.level >= 0 ? '+' : ''}${flow.level.toFixed(0)}%</b></span>
+            </div>
+            <div class="gauge-sub">近60秒 買 <b style="color:var(--up)">${flow.buyVol}</b> ｜ 賣 <b style="color:var(--down)">${flow.sellVol}</b></div>
+            <div class="acc-note">${accText}</div>
+          </div>
+        `;
+        col.append(gaugeSection);
+
+        // 4. Live Tape (大單流水: 時間 | 方向 | 買/賣 | 成交 | 單量)
+        const tape = document.createElement('div');
+        tape.className = 'tape-container';
+        tape.innerHTML = `
+          <div class="tape-head">
+            <span>時間</span><span>方向</span><span style="text-align:center">買 / 賣</span><span style="text-align:right">成交</span><span style="text-align:right">單量(&ge;${minVol})</span>
+          </div>
+          <div class="tape-list" id="tape_${symbol}"></div>
+        `;
+        col.append(tape);
+
+        const tapeList = tape.querySelector(`#tape_${symbol}`);
+        const prints = getCombinedPrints(snapshot, minVol).slice(0, 30);
+
+        if (!prints.length) {
+          tapeList.innerHTML = `<div class="tape-empty">尚無 &ge; ${minVol} 張大單</div>`;
+        } else {
+          for (const p of prints) {
+            const isBuy = p.side === 'BUY';
+            const bidP = Number(p.bid_price).toFixed(1);
+            const askP = Number(p.ask_price).toFixed(1);
+            const row = document.createElement('div');
+            row.className = 'tape-row';
+            row.innerHTML = `
+              <span class="tape-time">${p.timestamp.split('T')[1].slice(0, 8)}</span>
+              <span class="tape-side ${isBuy ? 'buy' : 'sell'}">${isBuy ? '掃貨' : '倒貨'}</span>
+              <span class="tape-bidask">${bidP} / ${askP}</span>
+              <span class="tape-price ${isBuy ? 'buy' : 'sell'}">${Number(p.price).toFixed(1)}</span>
+              <span class="tape-vol ${isBuy ? 'buy' : 'sell'}">${p.volume}</span>
+            `;
+            tapeList.append(row);
+          }
+        }
+
+        grid.append(col);
+      }
+    }
+
+    async function loadWatchlist() {
+      let data = {};
+      try {
+        const res = await fetch('../data/watchlist.json?ts=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) data = await res.json();
+      } catch {}
+
+      const defaultList = (data.symbols || ["2455", "3324", "3406", "3450", "4958"]).map(String);
+      symbolNames = Object.fromEntries(Object.entries(data.names || {}).filter(([s, n]) => typeof n === 'string'));
+      if (data.references) symbolReferences = { ...symbolReferences, ...data.references };
+      if (data.dispositions) symbolDispositions = { ...symbolDispositions, ...data.dispositions };
+
+      const saved = localStorage.getItem('stockRadarCustomSymbols');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            symbols = parsed.map(String).filter(s => /^\d{4,6}$/.test(s)).slice(0, 5);
+          }
+        } catch {}
+      } else {
+        symbols = defaultList.slice(0, 5);
+      }
+      const savedGlobalThreshold = localStorage.getItem('stockRadarMinimumVolume');
+      if (savedGlobalThreshold !== null) {
+        const globalThreshold = Math.max(1, Number(savedGlobalThreshold) || 1);
+        for (const symbol of symbols) {
+          symbolThresholds[symbol] = globalThreshold;
+        }
+        localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+      }
+      ids('activeCount').textContent = symbols.length;
+    }
+
+    async function refresh() {
+      if (currentMode !== 'LIVE') return;
+      try {
+        if (!symbols.length) return;
+        const displaySymbols = symbols.slice(0, 5);
+        const received = await Promise.all(displaySymbols.map(async s => {
+          const res = await fetch(`../data/live/${s}.json?ts=${Date.now()}`, { cache: 'no-store' });
+          return [s, res.ok ? await res.json() : null];
+        }));
+        snapshots = Object.fromEntries(received);
+        renderDashboard();
+        if (!monitoringStatus.enabled) {
+          ids('statusDot').className = 'status-dot sim';
+          ids('statusText').textContent = '⚪ 監控已停止：未連線 API（顯示最後快照）';
+          return;
+        }
+        if (monitoringStatus.state !== 'STREAMING') {
+          const reconnecting = monitoringStatus.state === 'RECONNECTING';
+          ids('statusDot').className = reconnecting ? 'status-dot stale' : 'status-dot sim';
+          ids('statusText').textContent = reconnecting
+            ? `🔴 連線中斷，正在重連${monitoringStatus.last_error ? `：${monitoringStatus.last_error}` : ''}`
+            : `🟠 API ${monitoringStatus.state === 'SUBSCRIBING' ? '訂閱中' : '連線中'}…`;
+          return;
+        }
+        const now = Date.now();
+        const validSnapshots = Object.values(snapshots).filter(Boolean);
+        const fresh = validSnapshots.filter(snapshot => {
+          const updatedAt = Date.parse(snapshot?.updated_at || '');
+          return Number.isFinite(updatedAt) && now - updatedAt >= 0 && now - updatedAt <= 180000;
+        }).length;
+
+        if (fresh) {
+          ids('statusDot').className = 'status-dot';
+          ids('statusText').textContent = `🟢 盤中即時連線中 (${fresh}/${displaySymbols.length} 檔)`;
+        } else if (validSnapshots.length) {
+          ids('statusDot').className = 'status-dot sim';
+          ids('statusText').textContent = `⚪ 離線靜態快照 (非開盤時段 ｜ 點【🎬 今日回放】可動態模擬)`;
+        } else {
+          ids('statusDot').className = 'status-dot stale';
+          ids('statusText').textContent = `⚪ 尚無快照數據 (請點【🎬 今日回放】或啟動收集器)`;
+        }
+      } catch (err) {
+        ids('statusDot').className = 'status-dot stale';
+        ids('statusText').textContent = '等待即時行情...';
+      }
+    }
+
+    function moveSymbol(sym, direction) {
+      const index = symbols.indexOf(sym);
+      if (index === -1) return;
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= symbols.length) return;
+      const temp = symbols[index];
+      symbols[index] = symbols[targetIndex];
+      symbols[targetIndex] = temp;
+      localStorage.setItem('stockRadarCustomSymbols', JSON.stringify(symbols));
+      renderDashboard();
+    }
+
+    async function replaceSymbolAt(index, newSym) {
+      try {
+        const res = await fetch(`/api/contract?symbol=${newSym}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.name) {
+            symbolNames[newSym] = data.name;
+            if (data.reference > 0) symbolReferences[newSym] = data.reference;
+            if (data.disposition) symbolDispositions[newSym] = data.disposition;
+          }
+        }
+      } catch {}
+
+      if (!symbolNames[newSym]) symbolNames[newSym] = popularStockNames[newSym] || `個股 ${newSym}`;
+      if (!symbolReferences[newSym]) symbolReferences[newSym] = popularStockRefs[newSym] || 100.0;
+
+      symbols[index] = newSym;
+      localStorage.setItem('stockRadarCustomSymbols', JSON.stringify(symbols));
+
+      // Sync to backend watchlist.json
+      try {
+        await fetch('/api/watchlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            symbols: symbols,
+            names: symbolNames,
+            references: symbolReferences,
+            dispositions: symbolDispositions,
+          })
+        });
+      } catch {}
+
+      if (currentMode === 'REPLAY') {
+        if (timerId) clearInterval(timerId);
+        await loadReplayData();
+        resumeCurrentMode();
+      } else {
+        refresh();
+      }
+    }
+
+    // Modal Interaction
+    const symbolConfigBtn = ids('symbolConfigBtn');
+    const symbolModal = ids('symbolModal');
+    const closeModalBtn = ids('closeModalBtn');
+    const cancelModalBtn = ids('cancelModalBtn');
+    const saveSymbolsBtn = ids('saveSymbolsBtn');
+    const newSymbolInput = ids('newSymbolInput');
+    const addSymbolBtn = ids('addSymbolBtn');
+    const addSymbolStatus = ids('addSymbolStatus');
+
+    let modalWorkingSymbols = [];
+    const popularStockNames = {
+      "2330": "台積電", "2317": "鴻海", "2454": "聯發科", "2382": "廣達",
+      "3231": "緯創", "3017": "奇鋐", "3324": "雙鴻", "2455": "全新",
+      "3450": "聯鈞", "4958": "臻鼎-KY", "3406": "玉晶光", "3037": "欣興",
+      "2603": "長榮", "2609": "陽明", "2615": "萬海", "2618": "長榮航"
+    };
+    const popularStockRefs = {
+      "2330": 1080.0, "2317": 215.0, "2454": 1390.0, "2382": 280.0,
+      "3231": 115.0, "3017": 620.0, "3324": 1250.0, "2455": 477.0,
+      "3450": 646.0, "4958": 500.0, "3406": 1005.0, "3037": 165.0,
+      "2603": 195.0, "2609": 68.0, "2615": 92.0, "2618": 36.0, "6669": 2615.0
+    };
+    const popularStockDispositions = {
+      "3406": "2分"
+    };
+
+    let allKnownSymbols = ["2330", "2317", "2454", "3324", "3017", "2382", "3231", "2455", "4958", "3450", "3406", "3037", "2603", "2609", "2615"];
+
+    // Merge popular names & dispositions into symbolNames & symbolReferences
+    symbolNames = { ...popularStockNames, ...symbolNames };
+    symbolReferences = { ...popularStockRefs, ...symbolReferences };
+    symbolDispositions = { ...popularStockDispositions, ...symbolDispositions };
+
+    async function handleAddSymbol() {
+      if (!newSymbolInput || !addSymbolStatus) return;
+      const raw = (newSymbolInput.value || '').trim();
+      if (!/^\d{4,6}$/.test(raw)) {
+        addSymbolStatus.textContent = '❌ 請輸入 4 碼股票代號（例如: 2330、2603）';
+        addSymbolStatus.style.color = '#f87171';
+        return;
+      }
+      if (modalWorkingSymbols.includes(raw)) {
+        addSymbolStatus.textContent = `ℹ️ 【${symbolNames[raw] || raw} (${raw})】已在目前看盤清單中！`;
+        addSymbolStatus.style.color = '#38bdf8';
+        return;
+      }
+      if (modalWorkingSymbols.length >= 5) {
+        addSymbolStatus.textContent = '⚠️ 看盤最多同時顯示 5 檔，請先移除其他檔或調換！';
+        addSymbolStatus.style.color = '#fbbf24';
+        return;
+      }
+
+      addSymbolStatus.textContent = `⏳ 正在查詢 ${raw} 合約資料...`;
+      addSymbolStatus.style.color = '#38bdf8';
+
+      try {
+        const res = await fetch(`/api/contract?symbol=${raw}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.name) {
+            symbolNames[raw] = data.name;
+            if (data.reference > 0) symbolReferences[raw] = data.reference;
+            if (data.disposition) symbolDispositions[raw] = data.disposition;
+          }
+        }
+      } catch {}
+
+      if (!symbolNames[raw]) symbolNames[raw] = popularStockNames[raw] || `個股 ${raw}`;
+      if (!symbolReferences[raw]) symbolReferences[raw] = popularStockRefs[raw] || 100.0;
+      if (!allKnownSymbols.includes(raw)) allKnownSymbols.unshift(raw);
+
+      modalWorkingSymbols.push(raw);
+      newSymbolInput.value = '';
+      addSymbolStatus.textContent = `✅ 成功加入【${symbolNames[raw]} (${raw})】！`;
+      addSymbolStatus.style.color = '#4ade80';
+      renderModalUI();
+    }
+
+    if (addSymbolBtn) addSymbolBtn.addEventListener('click', handleAddSymbol);
+    if (newSymbolInput) {
+      newSymbolInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          handleAddSymbol();
+        }
+      });
+    }
+
+    function renderModalUI() {
+      // 1. Render Active Ordered Stock List
+      const activeList = ids('modalActiveStockList');
+      if (activeList) {
+        activeList.replaceChildren();
+        if (!modalWorkingSymbols.length) {
+          activeList.innerHTML = '<div style="font-size:0.75rem; color:#f87171; text-align:center; padding:12px;">⚠️ 目前未選擇任何股票，請在上方輸入代號加入！</div>';
+        } else {
+          modalWorkingSymbols.forEach((sym, idx) => {
+            const name = symbolNames[sym] || popularStockNames[sym] || sym;
+            const refP = symbolReferences[sym] || popularStockRefs[sym] || 100;
+            const curThresh = getSymbolThreshold(sym, refP);
+            const disp = symbolDispositions[sym] || (snapshots[sym] && snapshots[sym].disposition);
+            const dispBadge = disp ? `<span style="font-size:0.68rem; color:#f59e0b; margin-left:4px; font-weight:700;" title="⚠️ 處置股票（2分鐘撮合）">⚠️ 處置</span>` : '';
+            const card = document.createElement('div');
+            card.className = 'active-stock-card';
+            card.innerHTML = `
+              <span class="col-num-badge">第 ${idx + 1} 欄</span>
+              <div class="stock-info-main">
+                <span class="stock-name-title">${name}</span>
+                ${dispBadge}
+                <span class="stock-code-sub">${sym}</span>
+                <span class="stock-ref-sub">(昨收 ${refP})</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:3px;">
+                <span style="font-size:0.68rem; color:#94a3b8;">門檻:</span>
+                <input type="number" min="1" step="1" class="modal-thresh-input" data-sym="${sym}" value="${curThresh}" style="width:42px; background:#070b13; border:1px solid #475569; border-radius:3px; color:#38bdf8; font-weight:800; font-size:0.75rem; text-align:center; padding:2px 3px;">
+                <span style="font-size:0.68rem; color:#94a3b8;">張</span>
+              </div>
+              <div class="order-btn-group">
+                <button class="order-btn" title="往前排一欄" ${idx === 0 ? 'disabled' : ''} data-act="up" data-idx="${idx}">⬆️</button>
+                <button class="order-btn" title="往後排一欄" ${idx === modalWorkingSymbols.length - 1 ? 'disabled' : ''} data-act="down" data-idx="${idx}">⬇️</button>
+                <button class="remove-stock-btn" title="從看盤移除" data-act="remove" data-sym="${sym}">✖</button>
+              </div>
+            `;
+            activeList.append(card);
+          });
+
+          // Bind order buttons
+          activeList.querySelectorAll('.order-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const act = btn.getAttribute('data-act');
+              const idx = Number(btn.getAttribute('data-idx'));
+              if (act === 'up' && idx > 0) {
+                const temp = modalWorkingSymbols[idx];
+                modalWorkingSymbols[idx] = modalWorkingSymbols[idx - 1];
+                modalWorkingSymbols[idx - 1] = temp;
+                renderModalUI();
+              } else if (act === 'down' && idx < modalWorkingSymbols.length - 1) {
+                const temp = modalWorkingSymbols[idx];
+                modalWorkingSymbols[idx] = modalWorkingSymbols[idx + 1];
+                modalWorkingSymbols[idx + 1] = temp;
+                renderModalUI();
+              }
+            });
+          });
+
+          activeList.querySelectorAll('.remove-stock-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const sym = btn.getAttribute('data-sym');
+              modalWorkingSymbols = modalWorkingSymbols.filter(s => s !== sym);
+              renderModalUI();
+            });
+          });
+        }
+      }
+    }
+
+    symbolConfigBtn.addEventListener('click', () => {
+      modalWorkingSymbols = [...symbols];
+      if (addSymbolStatus) addSymbolStatus.textContent = '';
+      if (newSymbolInput) newSymbolInput.value = '';
+      renderModalUI();
+      symbolModal.classList.add('show');
+      if (newSymbolInput) newSymbolInput.focus();
+    });
+
+    function hideSymbolModal() {
+      symbolModal.classList.remove('show');
+    }
+    closeModalBtn.addEventListener('click', hideSymbolModal);
+    cancelModalBtn.addEventListener('click', hideSymbolModal);
+
+    saveSymbolsBtn.addEventListener('click', async () => {
+      if (!modalWorkingSymbols.length) {
+        alert('請至少選擇 1 檔股票！');
+        return;
+      }
+      symbols = [...modalWorkingSymbols];
+      localStorage.setItem('stockRadarCustomSymbols', JSON.stringify(symbols));
+
+      // Save threshold adjustments from modal inputs
+      document.querySelectorAll('.modal-thresh-input').forEach(inp => {
+        const sym = inp.getAttribute('data-sym');
+        const val = parseInt(inp.value, 10);
+        if (sym && !isNaN(val) && val > 0) {
+          symbolThresholds[sym] = val;
+        }
+      });
+      localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+
+      // Sync to backend watchlist.json
+      try {
+        await fetch('/api/watchlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            symbols: symbols,
+            names: symbolNames,
+            references: symbolReferences,
+            dispositions: symbolDispositions,
+          })
+        });
+      } catch {}
+
+      hideSymbolModal();
+      ids('activeCount').textContent = symbols.length;
+
+      if (currentMode === 'REPLAY') {
+        if (timerId) clearInterval(timerId);
+        await loadReplayData();
+        resumeCurrentMode();
+      } else {
+        refresh();
+      }
+    });
+
+    async function init() {
+      try {
+        await loadWatchlist();
+        await refreshMonitoringStatus();
+        await refresh();
+      } catch {
+        ids('statusText').textContent = '無法讀取觀察清單';
+      }
+    }
+
+    init();
+    setInterval(refresh, 1000);
+    setInterval(refreshMonitoringStatus, 2000);
+  </script>
+</body>
+</html>

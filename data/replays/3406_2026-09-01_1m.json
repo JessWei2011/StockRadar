@@ -1,0 +1,2709 @@
+{
+  "schema_version": "1.0",
+  "symbol": "3406",
+  "market_date": "2026-09-01",
+  "timeframe": "1m",
+  "source": "shioaji_historical_kbars",
+  "bars": [
+    {
+      "timestamp": "2026-09-01T09:01:00+08:00",
+      "open": 1005.0,
+      "high": 1015.0,
+      "low": 999.0,
+      "close": 1010.0,
+      "volume": 678,
+      "amount": 682528000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:02:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 993.0,
+      "close": 1005.0,
+      "volume": 390,
+      "amount": 389740000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:03:00+08:00",
+      "open": 1005.0,
+      "high": 1015.0,
+      "low": 1000.0,
+      "close": 1010.0,
+      "volume": 135,
+      "amount": 136110000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:04:00+08:00",
+      "open": 1005.0,
+      "high": 1015.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 133,
+      "amount": 134195000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:05:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1005.0,
+      "close": 1020.0,
+      "volume": 118,
+      "amount": 119705000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:06:00+08:00",
+      "open": 1025.0,
+      "high": 1035.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 310,
+      "amount": 318175000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:07:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 95,
+      "amount": 96915000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:08:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1000.0,
+      "close": 1010.0,
+      "volume": 359,
+      "amount": 362475000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:09:00+08:00",
+      "open": 1005.0,
+      "high": 1025.0,
+      "low": 1005.0,
+      "close": 1020.0,
+      "volume": 87,
+      "amount": 88520000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:10:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1015.0,
+      "close": 1025.0,
+      "volume": 230,
+      "amount": 234430000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:11:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 60,
+      "amount": 61295000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:12:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 56,
+      "amount": 56830000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:13:00+08:00",
+      "open": 1010.0,
+      "high": 1030.0,
+      "low": 1005.0,
+      "close": 1025.0,
+      "volume": 109,
+      "amount": 111145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:14:00+08:00",
+      "open": 1030.0,
+      "high": 1045.0,
+      "low": 1025.0,
+      "close": 1040.0,
+      "volume": 148,
+      "amount": 153060000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:15:00+08:00",
+      "open": 1045.0,
+      "high": 1055.0,
+      "low": 1040.0,
+      "close": 1050.0,
+      "volume": 225,
+      "amount": 235640000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:16:00+08:00",
+      "open": 1050.0,
+      "high": 1060.0,
+      "low": 1045.0,
+      "close": 1055.0,
+      "volume": 169,
+      "amount": 177840000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:17:00+08:00",
+      "open": 1050.0,
+      "high": 1055.0,
+      "low": 1050.0,
+      "close": 1055.0,
+      "volume": 125,
+      "amount": 131455000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:18:00+08:00",
+      "open": 1055.0,
+      "high": 1060.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 104,
+      "amount": 109280000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:19:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1030.0,
+      "close": 1030.0,
+      "volume": 133,
+      "amount": 137930000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:20:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1030.0,
+      "close": 1040.0,
+      "volume": 55,
+      "amount": 56980000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:21:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 74,
+      "amount": 76735000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:22:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1025.0,
+      "close": 1030.0,
+      "volume": 46,
+      "amount": 47430000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:23:00+08:00",
+      "open": 1035.0,
+      "high": 1055.0,
+      "low": 1030.0,
+      "close": 1045.0,
+      "volume": 100,
+      "amount": 104480000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:24:00+08:00",
+      "open": 1050.0,
+      "high": 1050.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 41,
+      "amount": 42965000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:25:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1040.0,
+      "close": 1040.0,
+      "volume": 14,
+      "amount": 14560000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:26:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 10,
+      "amount": 10380000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:27:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 6,
+      "amount": 6215000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:28:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 12,
+      "amount": 12440000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:29:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 11,
+      "amount": 11435000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:30:00+08:00",
+      "open": 1035.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1045.0,
+      "volume": 50,
+      "amount": 51925000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:31:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1040.0,
+      "close": 1045.0,
+      "volume": 26,
+      "amount": 27165000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:32:00+08:00",
+      "open": 1045.0,
+      "high": 1060.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 168,
+      "amount": 176930000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:33:00+08:00",
+      "open": 1045.0,
+      "high": 1050.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 32,
+      "amount": 33590000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:34:00+08:00",
+      "open": 1050.0,
+      "high": 1055.0,
+      "low": 1045.0,
+      "close": 1055.0,
+      "volume": 29,
+      "amount": 30475000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:35:00+08:00",
+      "open": 1055.0,
+      "high": 1055.0,
+      "low": 1050.0,
+      "close": 1055.0,
+      "volume": 25,
+      "amount": 26370000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:36:00+08:00",
+      "open": 1055.0,
+      "high": 1060.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 107,
+      "amount": 113100000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:37:00+08:00",
+      "open": 1060.0,
+      "high": 1080.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 207,
+      "amount": 221235000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:38:00+08:00",
+      "open": 1070.0,
+      "high": 1075.0,
+      "low": 1065.0,
+      "close": 1070.0,
+      "volume": 181,
+      "amount": 193615000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:39:00+08:00",
+      "open": 1070.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1065.0,
+      "volume": 66,
+      "amount": 70320000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:40:00+08:00",
+      "open": 1065.0,
+      "high": 1075.0,
+      "low": 1065.0,
+      "close": 1070.0,
+      "volume": 50,
+      "amount": 53420000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:41:00+08:00",
+      "open": 1070.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1065.0,
+      "volume": 57,
+      "amount": 60775000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:42:00+08:00",
+      "open": 1065.0,
+      "high": 1070.0,
+      "low": 1065.0,
+      "close": 1070.0,
+      "volume": 27,
+      "amount": 28855000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:43:00+08:00",
+      "open": 1070.0,
+      "high": 1085.0,
+      "low": 1070.0,
+      "close": 1085.0,
+      "volume": 201,
+      "amount": 216860000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:44:00+08:00",
+      "open": 1080.0,
+      "high": 1090.0,
+      "low": 1070.0,
+      "close": 1075.0,
+      "volume": 224,
+      "amount": 241945000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:45:00+08:00",
+      "open": 1075.0,
+      "high": 1080.0,
+      "low": 1075.0,
+      "close": 1075.0,
+      "volume": 36,
+      "amount": 38740000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:46:00+08:00",
+      "open": 1080.0,
+      "high": 1090.0,
+      "low": 1075.0,
+      "close": 1080.0,
+      "volume": 122,
+      "amount": 132070000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:47:00+08:00",
+      "open": 1080.0,
+      "high": 1085.0,
+      "low": 1075.0,
+      "close": 1080.0,
+      "volume": 57,
+      "amount": 61585000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:48:00+08:00",
+      "open": 1080.0,
+      "high": 1085.0,
+      "low": 1075.0,
+      "close": 1085.0,
+      "volume": 55,
+      "amount": 59415000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:49:00+08:00",
+      "open": 1085.0,
+      "high": 1085.0,
+      "low": 1080.0,
+      "close": 1080.0,
+      "volume": 46,
+      "amount": 49815000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:50:00+08:00",
+      "open": 1080.0,
+      "high": 1080.0,
+      "low": 1080.0,
+      "close": 1080.0,
+      "volume": 51,
+      "amount": 55080000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:51:00+08:00",
+      "open": 1080.0,
+      "high": 1080.0,
+      "low": 1070.0,
+      "close": 1075.0,
+      "volume": 84,
+      "amount": 90345000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:52:00+08:00",
+      "open": 1080.0,
+      "high": 1085.0,
+      "low": 1080.0,
+      "close": 1085.0,
+      "volume": 59,
+      "amount": 63925000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:53:00+08:00",
+      "open": 1085.0,
+      "high": 1085.0,
+      "low": 1080.0,
+      "close": 1080.0,
+      "volume": 16,
+      "amount": 17325000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:54:00+08:00",
+      "open": 1085.0,
+      "high": 1085.0,
+      "low": 1080.0,
+      "close": 1080.0,
+      "volume": 41,
+      "amount": 44325000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:55:00+08:00",
+      "open": 1080.0,
+      "high": 1080.0,
+      "low": 1055.0,
+      "close": 1055.0,
+      "volume": 269,
+      "amount": 286020000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:56:00+08:00",
+      "open": 1055.0,
+      "high": 1065.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 106,
+      "amount": 112190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:57:00+08:00",
+      "open": 1065.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1065.0,
+      "volume": 36,
+      "amount": 38375000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:58:00+08:00",
+      "open": 1070.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1065.0,
+      "volume": 61,
+      "amount": 64910000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T09:59:00+08:00",
+      "open": 1065.0,
+      "high": 1065.0,
+      "low": 1055.0,
+      "close": 1065.0,
+      "volume": 60,
+      "amount": 63585000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:00:00+08:00",
+      "open": 1065.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1065.0,
+      "volume": 35,
+      "amount": 37220000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:01:00+08:00",
+      "open": 1065.0,
+      "high": 1070.0,
+      "low": 1065.0,
+      "close": 1065.0,
+      "volume": 22,
+      "amount": 23505000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:02:00+08:00",
+      "open": 1070.0,
+      "high": 1070.0,
+      "low": 1060.0,
+      "close": 1060.0,
+      "volume": 40,
+      "amount": 42615000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:03:00+08:00",
+      "open": 1065.0,
+      "high": 1065.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 54,
+      "amount": 57315000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:04:00+08:00",
+      "open": 1060.0,
+      "high": 1060.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 39,
+      "amount": 41235000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:05:00+08:00",
+      "open": 1055.0,
+      "high": 1065.0,
+      "low": 1055.0,
+      "close": 1060.0,
+      "volume": 32,
+      "amount": 33890000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:06:00+08:00",
+      "open": 1060.0,
+      "high": 1060.0,
+      "low": 1055.0,
+      "close": 1055.0,
+      "volume": 42,
+      "amount": 44395000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:07:00+08:00",
+      "open": 1055.0,
+      "high": 1055.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 311,
+      "amount": 323530000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:08:00+08:00",
+      "open": 1040.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 61,
+      "amount": 63405000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:09:00+08:00",
+      "open": 1040.0,
+      "high": 1050.0,
+      "low": 1035.0,
+      "close": 1050.0,
+      "volume": 62,
+      "amount": 64655000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:10:00+08:00",
+      "open": 1050.0,
+      "high": 1055.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 21,
+      "amount": 22045000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:11:00+08:00",
+      "open": 1050.0,
+      "high": 1055.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 32,
+      "amount": 33595000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:12:00+08:00",
+      "open": 1050.0,
+      "high": 1050.0,
+      "low": 1045.0,
+      "close": 1050.0,
+      "volume": 21,
+      "amount": 21990000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:13:00+08:00",
+      "open": 1050.0,
+      "high": 1050.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 81,
+      "amount": 84245000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:14:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1040.0,
+      "close": 1045.0,
+      "volume": 13,
+      "amount": 13580000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:15:00+08:00",
+      "open": 1040.0,
+      "high": 1050.0,
+      "low": 1040.0,
+      "close": 1045.0,
+      "volume": 31,
+      "amount": 32405000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:16:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 40,
+      "amount": 41650000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:17:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 35,
+      "amount": 36295000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:18:00+08:00",
+      "open": 1040.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 25,
+      "amount": 25975000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:19:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 28,
+      "amount": 29150000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:20:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 170,
+      "amount": 174535000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:21:00+08:00",
+      "open": 1030.0,
+      "high": 1035.0,
+      "low": 1025.0,
+      "close": 1030.0,
+      "volume": 55,
+      "amount": 56610000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:22:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1025.0,
+      "close": 1035.0,
+      "volume": 24,
+      "amount": 24770000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:23:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 34,
+      "amount": 34970000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:24:00+08:00",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 45,
+      "amount": 46160000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:25:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 61,
+      "amount": 62445000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:26:00+08:00",
+      "open": 1020.0,
+      "high": 1035.0,
+      "low": 1020.0,
+      "close": 1030.0,
+      "volume": 75,
+      "amount": 76980000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:27:00+08:00",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1030.0,
+      "volume": 11,
+      "amount": 11320000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:28:00+08:00",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1030.0,
+      "volume": 17,
+      "amount": 17500000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:29:00+08:00",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 15,
+      "amount": 15415000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:30:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 20,
+      "amount": 20455000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:31:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 53,
+      "amount": 53935000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:32:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 71,
+      "amount": 72130000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:33:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 10,
+      "amount": 10175000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:34:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1010.0,
+      "close": 1020.0,
+      "volume": 45,
+      "amount": 45825000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:35:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 14,
+      "amount": 14235000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:36:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1000.0,
+      "close": 1010.0,
+      "volume": 175,
+      "amount": 176265000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:37:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1005.0,
+      "close": 1020.0,
+      "volume": 73,
+      "amount": 74140000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:38:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 53,
+      "amount": 53800000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:39:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 19,
+      "amount": 19310000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:40:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1020.0,
+      "volume": 23,
+      "amount": 23355000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:41:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 13,
+      "amount": 13215000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:42:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1000.0,
+      "close": 1010.0,
+      "volume": 118,
+      "amount": 119285000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:43:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 32,
+      "amount": 32525000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:44:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 33,
+      "amount": 33530000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:45:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 22,
+      "amount": 22375000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:46:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 74,
+      "amount": 74645000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:47:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1005.0,
+      "close": 1015.0,
+      "volume": 23,
+      "amount": 23270000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:48:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1020.0,
+      "volume": 72,
+      "amount": 73215000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:49:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 15,
+      "amount": 15345000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:50:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 61,
+      "amount": 62200000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:51:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 33,
+      "amount": 33405000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:52:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 33,
+      "amount": 33355000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:53:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 24,
+      "amount": 24165000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:54:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 12,
+      "amount": 12105000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:55:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1005.0,
+      "close": 1020.0,
+      "volume": 50,
+      "amount": 50520000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:56:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 19,
+      "amount": 19255000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:57:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1020.0,
+      "volume": 12,
+      "amount": 12185000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:58:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 10,
+      "amount": 10175000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T10:59:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 15,
+      "amount": 15230000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:00:00+08:00",
+      "open": 1010.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 15,
+      "amount": 15220000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:01:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 8,
+      "amount": 8150000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:02:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 22,
+      "amount": 22360000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:03:00+08:00",
+      "open": 1015.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1025.0,
+      "volume": 40,
+      "amount": 40865000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:04:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 15,
+      "amount": 15340000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:05:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 15,
+      "amount": 15380000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:06:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 18,
+      "amount": 18450000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:07:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 8,
+      "amount": 8175000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:08:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 9,
+      "amount": 9220000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:09:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 5,
+      "amount": 5120000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:10:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 8,
+      "amount": 8195000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:11:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 6,
+      "amount": 6145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:12:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 16,
+      "amount": 16430000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:13:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 27,
+      "amount": 27630000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:14:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 15,
+      "amount": 15350000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:15:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 4,
+      "amount": 4090000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:16:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 9,
+      "amount": 9225000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:17:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 6,
+      "amount": 6145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:18:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 8,
+      "amount": 8195000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:19:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 5,
+      "amount": 5125000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:20:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 14,
+      "amount": 14350000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:21:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 25,
+      "amount": 25480000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:22:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 33,
+      "amount": 33500000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:23:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 11,
+      "amount": 11180000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:24:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 6,
+      "amount": 6115000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:25:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 11,
+      "amount": 11205000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:26:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 9,
+      "amount": 9175000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:27:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 14,
+      "amount": 14270000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:28:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 10,
+      "amount": 10190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:29:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 39,
+      "amount": 39885000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:30:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1020.0,
+      "close": 1020.0,
+      "volume": 6,
+      "amount": 6140000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:31:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 22,
+      "amount": 22445000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:32:00+08:00",
+      "open": 1020.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 11,
+      "amount": 11230000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:33:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1030.0,
+      "volume": 46,
+      "amount": 47315000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:34:00+08:00",
+      "open": 1030.0,
+      "high": 1030.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 21,
+      "amount": 21615000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:35:00+08:00",
+      "open": 1030.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1030.0,
+      "volume": 29,
+      "amount": 29890000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:36:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1030.0,
+      "volume": 13,
+      "amount": 13415000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:37:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1030.0,
+      "volume": 17,
+      "amount": 17545000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:38:00+08:00",
+      "open": 1030.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 3,
+      "amount": 3095000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:39:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 14,
+      "amount": 14485000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:40:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 14,
+      "amount": 14490000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:41:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 27,
+      "amount": 27890000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:42:00+08:00",
+      "open": 1035.0,
+      "high": 1035.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 3,
+      "amount": 3105000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:43:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 10,
+      "amount": 10355000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:44:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 30,
+      "amount": 31060000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:45:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1040.0,
+      "close": 1040.0,
+      "volume": 20,
+      "amount": 20800000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:46:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 7,
+      "amount": 7265000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:47:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 22,
+      "amount": 22870000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:48:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 17,
+      "amount": 17640000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:49:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 10,
+      "amount": 10375000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:50:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1040.0,
+      "close": 1040.0,
+      "volume": 20,
+      "amount": 20800000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:51:00+08:00",
+      "open": 1040.0,
+      "high": 1045.0,
+      "low": 1040.0,
+      "close": 1040.0,
+      "volume": 23,
+      "amount": 23970000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:52:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1040.0,
+      "close": 1040.0,
+      "volume": 12,
+      "amount": 12480000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:53:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 50,
+      "amount": 52250000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:54:00+08:00",
+      "open": 1045.0,
+      "high": 1050.0,
+      "low": 1045.0,
+      "close": 1045.0,
+      "volume": 54,
+      "amount": 56495000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:55:00+08:00",
+      "open": 1045.0,
+      "high": 1045.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 50,
+      "amount": 51945000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:56:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 11,
+      "amount": 11415000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:57:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 18,
+      "amount": 18690000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:58:00+08:00",
+      "open": 1035.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1040.0,
+      "volume": 6,
+      "amount": 6235000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T11:59:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 12,
+      "amount": 12470000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:00:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1035.0,
+      "close": 1035.0,
+      "volume": 5,
+      "amount": 5195000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:01:00+08:00",
+      "open": 1040.0,
+      "high": 1040.0,
+      "low": 1030.0,
+      "close": 1035.0,
+      "volume": 37,
+      "amount": 38285000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:02:00+08:00",
+      "open": 1030.0,
+      "high": 1035.0,
+      "low": 1025.0,
+      "close": 1025.0,
+      "volume": 43,
+      "amount": 44255000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:03:00+08:00",
+      "open": 1025.0,
+      "high": 1030.0,
+      "low": 1020.0,
+      "close": 1025.0,
+      "volume": 27,
+      "amount": 27705000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:04:00+08:00",
+      "open": 1025.0,
+      "high": 1025.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 30,
+      "amount": 30650000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:05:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 21,
+      "amount": 21335000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:06:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 30,
+      "amount": 30440000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:07:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 24,
+      "amount": 24260000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:08:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 22,
+      "amount": 22205000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:09:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 60,
+      "amount": 60350000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:10:00+08:00",
+      "open": 1000.0,
+      "high": 1010.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 110,
+      "amount": 110445000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:11:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1000.0,
+      "close": 1010.0,
+      "volume": 66,
+      "amount": 66350000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:12:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 63,
+      "amount": 63435000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:13:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 16,
+      "amount": 16190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:14:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 17,
+      "amount": 17250000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:15:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 7,
+      "amount": 7095000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:16:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 26,
+      "amount": 26275000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:17:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 10,
+      "amount": 10145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:18:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 13,
+      "amount": 13190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:19:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1020.0,
+      "volume": 12,
+      "amount": 12190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:20:00+08:00",
+      "open": 1020.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 7,
+      "amount": 7120000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:21:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 13,
+      "amount": 13180000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:22:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:23:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 11,
+      "amount": 11145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:24:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 2,
+      "amount": 2020000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:25:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 11,
+      "amount": 11145000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:26:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 2,
+      "amount": 2030000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:27:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 25,
+      "amount": 25385000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:28:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 1,
+      "amount": 1015000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:29:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 11,
+      "amount": 11165000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:30:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 3,
+      "amount": 3030000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:31:00+08:00",
+      "open": 1015.0,
+      "high": 1020.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 10,
+      "amount": 10155000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:32:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 6,
+      "amount": 6060000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:33:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 32,
+      "amount": 32315000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:34:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 7,
+      "amount": 7035000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:35:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 8,
+      "amount": 8070000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:36:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 9,
+      "amount": 9055000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:37:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 28,
+      "amount": 28270000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:38:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 5,
+      "amount": 5045000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:39:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 12,
+      "amount": 12085000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:40:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 6,
+      "amount": 6035000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:41:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 9,
+      "amount": 9075000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:42:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 2,
+      "amount": 2010000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:43:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 28,
+      "amount": 28155000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:44:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 61,
+      "amount": 61030000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:45:00+08:00",
+      "open": 1000.0,
+      "high": 1005.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 43,
+      "amount": 43010000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:46:00+08:00",
+      "open": 1005.0,
+      "high": 1015.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 75,
+      "amount": 75560000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:47:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 3,
+      "amount": 3030000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:48:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 16,
+      "amount": 16160000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:49:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1015.0,
+      "volume": 4,
+      "amount": 4045000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:50:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 5,
+      "amount": 5065000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:51:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 9,
+      "amount": 9090000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:52:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 16,
+      "amount": 16190000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:53:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 4,
+      "amount": 4040000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:54:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 35,
+      "amount": 35350000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:55:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 7,
+      "amount": 7045000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:56:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:57:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:58:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 12,
+      "amount": 12085000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T12:59:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 4,
+      "amount": 4020000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:00:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 28,
+      "amount": 28280000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:01:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:02:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 47,
+      "amount": 47260000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:03:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 10,
+      "amount": 10050000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:04:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1010.0,
+      "volume": 39,
+      "amount": 39365000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:05:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 36,
+      "amount": 36375000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:06:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 22,
+      "amount": 22220000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:07:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1015.0,
+      "close": 1015.0,
+      "volume": 1,
+      "amount": 1015000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:08:00+08:00",
+      "open": 1010.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 16,
+      "amount": 16205000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:09:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 8,
+      "amount": 8080000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:10:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 65,
+      "amount": 65650000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:11:00+08:00",
+      "open": 1015.0,
+      "high": 1015.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 18,
+      "amount": 18245000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:12:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1010.0,
+      "close": 1010.0,
+      "volume": 34,
+      "amount": 34340000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:13:00+08:00",
+      "open": 1010.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 41,
+      "amount": 41315000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:14:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 16,
+      "amount": 16080000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:15:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 3,
+      "amount": 3015000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:16:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 19,
+      "amount": 19100000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:17:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 21,
+      "amount": 21170000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:18:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 21,
+      "amount": 21130000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:19:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 148,
+      "amount": 148310000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:20:00+08:00",
+      "open": 1005.0,
+      "high": 1010.0,
+      "low": 999.0,
+      "close": 1000.0,
+      "volume": 145,
+      "amount": 144982000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:21:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 38,
+      "amount": 38000000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:22:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 22,
+      "amount": 22000000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:23:00+08:00",
+      "open": 1000.0,
+      "high": 1005.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 37,
+      "amount": 37005000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:24:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 41,
+      "amount": 41000000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:25:00+08:00",
+      "open": 999.0,
+      "high": 1005.0,
+      "low": 999.0,
+      "close": 1000.0,
+      "volume": 49,
+      "amount": 49041000.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:26:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:27:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:28:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:29:00+08:00",
+      "open": 1000.0,
+      "high": 1000.0,
+      "low": 1000.0,
+      "close": 1000.0,
+      "volume": 0,
+      "amount": 0.0,
+      "tick_count": 0
+    },
+    {
+      "timestamp": "2026-09-01T13:30:00+08:00",
+      "open": 1005.0,
+      "high": 1005.0,
+      "low": 1005.0,
+      "close": 1005.0,
+      "volume": 354,
+      "amount": 355770000.0,
+      "tick_count": 0
+    }
+  ]
+}

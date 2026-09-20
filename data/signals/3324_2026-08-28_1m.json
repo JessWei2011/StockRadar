@@ -1,0 +1,608 @@
+{
+  "schema_version": "1.0",
+  "symbol": "3324",
+  "market_date": "2026-08-28",
+  "timeframe": "1m",
+  "source_replay": "shioaji_historical_kbars",
+  "parameters": {
+    "structure_window": 5,
+    "breakout_window": 20,
+    "volume_multiple": 2.0,
+    "reversal_close_position_max": 0.35
+  },
+  "events": [
+    {
+      "timestamp": "2026-08-28T09:10:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1095.0,
+        "prior_close": 1080.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:29:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1110.0,
+        "prior_close": 1105.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:46:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 6.67。",
+      "metrics": {
+        "close": 1125.0,
+        "prior_high": 1120.0,
+        "volume": 140.0,
+        "median_volume": 21.0,
+        "volume_ratio": 6.6667
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:48:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1120.0,
+        "prior_close": 1115.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:48:00+08:00",
+      "signal": "HIGH_VOLUME_REVERSAL",
+      "severity": "CAUTION",
+      "reason": "爆量收黑且收盤位於本根振幅下方 0%，量比 2.59。",
+      "metrics": {
+        "open": 1125.0,
+        "high": 1125.0,
+        "low": 1120.0,
+        "close": 1120.0,
+        "volume": 57.0,
+        "median_volume": 22.0,
+        "volume_ratio": 2.5909,
+        "close_position": 0.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:49:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1120.0,
+        "prior_close": 1115.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:52:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1130.0,
+        "prior_close": 1125.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:53:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1130.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:54:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1125.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:55:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1135.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:55:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 3.11。",
+      "metrics": {
+        "close": 1135.0,
+        "prior_high": 1130.0,
+        "volume": 70.0,
+        "median_volume": 22.5,
+        "volume_ratio": 3.1111
+      }
+    },
+    {
+      "timestamp": "2026-08-28T09:56:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1130.0,
+        "prior_close": 1125.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:12:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1115.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:12:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 14.26。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_high": 1135.0,
+        "volume": 278.0,
+        "median_volume": 19.5,
+        "volume_ratio": 14.2564
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:13:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:14:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:15:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:16:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1155.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:16:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 9.36。",
+      "metrics": {
+        "close": 1155.0,
+        "prior_high": 1145.0,
+        "volume": 220.0,
+        "median_volume": 23.5,
+        "volume_ratio": 9.3617
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:17:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1155.0,
+        "prior_close": 1145.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:40:00+08:00",
+      "signal": "HIGH_VOLUME_REVERSAL",
+      "severity": "CAUTION",
+      "reason": "爆量收黑且收盤位於本根振幅下方 0%，量比 9.38。",
+      "metrics": {
+        "open": 1135.0,
+        "high": 1135.0,
+        "low": 1130.0,
+        "close": 1130.0,
+        "volume": 61.0,
+        "median_volume": 6.5,
+        "volume_ratio": 9.3846,
+        "close_position": 0.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T10:49:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1135.0,
+        "prior_close": 1130.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:09:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1125.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:10:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1130.0,
+        "prior_close": 1120.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:23:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1130.0,
+        "prior_close": 1125.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:24:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1125.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:24:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 20.86。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_high": 1130.0,
+        "volume": 73.0,
+        "median_volume": 3.5,
+        "volume_ratio": 20.8571
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:36:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:39:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:40:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:40:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 5.78。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_high": 1140.0,
+        "volume": 26.0,
+        "median_volume": 4.5,
+        "volume_ratio": 5.7778
+      }
+    },
+    {
+      "timestamp": "2026-08-28T11:48:00+08:00",
+      "signal": "HIGH_VOLUME_REVERSAL",
+      "severity": "CAUTION",
+      "reason": "爆量收黑且收盤位於本根振幅下方 0%，量比 6.73。",
+      "metrics": {
+        "open": 1145.0,
+        "high": 1145.0,
+        "low": 1140.0,
+        "close": 1140.0,
+        "volume": 37.0,
+        "median_volume": 5.5,
+        "volume_ratio": 6.7273,
+        "close_position": 0.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:15:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:17:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:18:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:21:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:21:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 26.00。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_high": 1140.0,
+        "volume": 78.0,
+        "median_volume": 3.0,
+        "volume_ratio": 26.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:22:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:23:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:24:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1150.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:24:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 3.00。",
+      "metrics": {
+        "close": 1150.0,
+        "prior_high": 1145.0,
+        "volume": 9.0,
+        "median_volume": 3.0,
+        "volume_ratio": 3.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:26:00+08:00",
+      "signal": "HIGH_VOLUME_REVERSAL",
+      "severity": "CAUTION",
+      "reason": "爆量收黑且收盤位於本根振幅下方 0%，量比 7.67。",
+      "metrics": {
+        "open": 1145.0,
+        "high": 1145.0,
+        "low": 1140.0,
+        "close": 1140.0,
+        "volume": 23.0,
+        "median_volume": 3.0,
+        "volume_ratio": 7.6667,
+        "close_position": 0.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:40:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1150.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:41:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_close": 1140.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T12:41:00+08:00",
+      "signal": "HIGH_VOLUME_REVERSAL",
+      "severity": "CAUTION",
+      "reason": "爆量收黑且收盤位於本根振幅下方 0%，量比 8.00。",
+      "metrics": {
+        "open": 1150.0,
+        "high": 1150.0,
+        "low": 1145.0,
+        "close": 1145.0,
+        "volume": 24.0,
+        "median_volume": 3.0,
+        "volume_ratio": 8.0,
+        "close_position": 0.0
+      }
+    },
+    {
+      "timestamp": "2026-08-28T13:11:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1135.0,
+        "prior_close": 1130.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T13:12:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1130.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T13:14:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T13:15:00+08:00",
+      "signal": "RISING_STRUCTURE",
+      "severity": "INFO",
+      "reason": "最近 5 根高低點未下移，收盤高於 5 根前。",
+      "metrics": {
+        "close": 1140.0,
+        "prior_close": 1135.0,
+        "structure_window": 5
+      }
+    },
+    {
+      "timestamp": "2026-08-28T13:18:00+08:00",
+      "signal": "VOLUME_BREAKOUT",
+      "severity": "WATCH",
+      "reason": "收盤突破前 20 根最高價，量比 4.38。",
+      "metrics": {
+        "close": 1145.0,
+        "prior_high": 1140.0,
+        "volume": 35.0,
+        "median_volume": 8.0,
+        "volume_ratio": 4.375
+      }
+    }
+  ]
+}

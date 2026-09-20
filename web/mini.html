@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockRadar 直式巨型燈柱 HUD</title>
+  <style>
+    :root {
+      --bg: #05080f;
+      --card-bg: #0d1527;
+      --card-header: #131f38;
+      --border: #1e293b;
+      --border-light: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --dark-muted: #64748b;
+      --up: #f87171;
+      --up-bg: rgba(239, 68, 68, 0.15);
+      --down: #34d399;
+      --down-bg: rgba(52, 211, 153, 0.15);
+      --warn: #fbbf24;
+      --accent: #38bdf8;
+      --replay: #a855f7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; width: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--bg); color: var(--text); overflow: hidden;
+      user-select: none;
+    }
+
+    /* Vertical Sidebar Layout (直式側欄 HUD) */
+    .hud-sidebar {
+      display: flex;
+      flex-direction: column;
+      height: 100vh; width: 100vw;
+      padding: 3px; gap: 3px;
+    }
+
+    /* 頂部極簡狀態條 */
+    .hud-topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #0b1120; border: 1px solid var(--border); border-radius: 4px;
+      padding: 2px 6px; height: 20px; flex-shrink: 0;
+    }
+    .brand-row {
+      display: flex; align-items: center; gap: 4px; font-size: 0.65rem; font-weight: 800; color: #fff;
+    }
+    .brand-row span { color: var(--accent); }
+    .status-dot {
+      display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--down); box-shadow: 0 0 5px var(--down); animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+    }
+    .status-dot.stale { background: var(--up); box-shadow: 0 0 5px var(--up); animation: none; }
+    .status-dot.sim { background: var(--replay); box-shadow: 0 0 5px var(--replay); animation: none; }
+    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+    .clock-row {
+      font-size: 0.62rem; color: #94a3b8; font-variant-numeric: tabular-nums; font-weight: 700;
+    }
+
+    /* 5 Stock Cards (5 檔垂直堆疊，每檔卡片高度分配: 1/5 名稱, 1/5 股價, 3/5 巨型燈柱) */
+    .stock-hud-card {
+      display: flex; flex-direction: column; justify-content: space-between;
+      border-radius: 5px; padding: 3px 6px; min-height: 0; flex: 1;
+      border: 1px solid var(--border); gap: 2px;
+      transition: all 0.15s;
+    }
+    .stock-hud-card:hover { filter: brightness(1.15); }
+
+    /* 5 檔個股專屬獨立背景識別色 */
+    .stock-hud-card.col-theme-0 {
+      background: linear-gradient(180deg, #0d213f 0%, #071224 100%);
+      border-color: #1d4ed8;
+    }
+    .stock-hud-card.col-theme-1 {
+      background: linear-gradient(180deg, #281242 0%, #140924 100%);
+      border-color: #6b21a8;
+    }
+    .stock-hud-card.col-theme-2 {
+      background: linear-gradient(180deg, #0b2b28 0%, #061614 100%);
+      border-color: #0f766e;
+    }
+    .stock-hud-card.col-theme-3 {
+      background: linear-gradient(180deg, #2d1d0c 0%, #170e05 100%);
+      border-color: #92400e;
+    }
+    .stock-hud-card.col-theme-4 {
+      background: linear-gradient(180deg, #2a1226 0%, #150813 100%);
+      border-color: #86198f;
+    }
+
+    /* 第一排：股名與代號 (佔比 1/5 ~20%) */
+    .card-name-row {
+      display: flex; justify-content: space-between; align-items: center;
+      height: 20%; min-height: 18px; line-height: 1; white-space: nowrap;
+    }
+    .stock-name {
+      font-size: 0.92rem; font-weight: 900; color: #fff; overflow: hidden; text-overflow: ellipsis;
+    }
+    .stock-code {
+      font-size: 0.72rem; color: #cbd5e1; font-variant-numeric: tabular-nums; opacity: 0.85; font-weight: 700;
+    }
+
+    /* 第二排：現價 ⚠️ + 漲跌幅 (佔比 1/5 ~20%) */
+    .card-price-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      height: 20%; min-height: 18px; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap;
+    }
+    .stock-price { font-size: 1.15rem; font-weight: 900; }
+    .stock-change { font-size: 0.86rem; font-weight: 800; }
+    .price-up { color: var(--up); }
+    .price-down { color: var(--down); }
+    .price-flat { color: var(--muted); }
+    .disp-warn-icon { font-size: 0.78rem; cursor: help; user-select: none; line-height: 1; }
+
+    /* 第三排：三大並排直立巨型燈柱 (佔比 3/5 ~60%) */
+    .card-lamp-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;
+      height: 58%; flex: 1; align-items: stretch;
+    }
+    .pillar-lamp {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 4px; font-weight: 900; line-height: 1.15;
+      background: rgba(10, 15, 28, 0.85); color: #475569; border: 1px solid rgba(255,255,255,0.08);
+      text-align: center; padding: 2px 1px; transition: all 0.2s ease;
+      height: 100%;
+    }
+    .pillar-icon { font-size: 0.82rem; margin-bottom: 2px; }
+    .pillar-text { font-size: 0.76rem; font-weight: 900; }
+    .pillar-sub { font-size: 0.68rem; font-weight: 900; margin-top: 1px; }
+
+    /* 🔴 掃貨 4 階 (直立柱狀爆發) */
+    .pillar-lamp.buy-tier-1 {
+      background: linear-gradient(180deg, #dc2626, #991b1b); color: #fff; border-color: #fca5a5;
+      box-shadow: 0 0 10px rgba(220, 38, 38, 0.85); animation: flash-buy-1 0.7s infinite alternate;
+    }
+    .pillar-lamp.buy-tier-2 {
+      background: linear-gradient(180deg, #ef4444, #ea580c); color: #fff; border-color: #fdba74;
+      box-shadow: 0 0 14px rgba(234, 88, 12, 0.95); animation: flash-buy-2 0.55s infinite alternate;
+    }
+    .pillar-lamp.buy-tier-3 {
+      background: linear-gradient(180deg, #f97316, #eab308); color: #070b14; font-weight: 900; border-color: #fef08a;
+      box-shadow: 0 0 18px rgba(234, 179, 8, 1), inset 0 0 4px #fff; animation: flash-buy-3 0.45s infinite alternate;
+    }
+    .pillar-lamp.buy-tier-4 {
+      background: linear-gradient(180deg, #ff0055, #f59e0b, #eab308, #ec4899); background-size: 200% 200%;
+      color: #fff; font-weight: 900; border-color: #fff; box-shadow: 0 0 22px rgba(255, 215, 0, 1), inset 0 0 6px #fff;
+      animation: flash-buy-rainbow 0.35s infinite alternate, rainbow-bg 2s infinite linear;
+    }
+
+    /* 🟢 倒貨 4 階 (直立柱狀灌殺) */
+    .pillar-lamp.sell-tier-1 {
+      background: linear-gradient(180deg, #16a34a, #166534); color: #fff; border-color: #86efac;
+      box-shadow: 0 0 10px rgba(22, 163, 74, 0.85); animation: flash-sell-1 0.7s infinite alternate;
+    }
+    .pillar-lamp.sell-tier-2 {
+      background: linear-gradient(180deg, #22c55e, #059669); color: #fff; border-color: #a7f3d0;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.95); animation: flash-sell-2 0.55s infinite alternate;
+    }
+    .pillar-lamp.sell-tier-3, .pillar-lamp.sell-tier-4 {
+      background: linear-gradient(180deg, #10b981, #84cc16); color: #070b14; font-weight: 900; border-color: #d9f99d;
+      box-shadow: 0 0 18px rgba(132, 204, 22, 1), inset 0 0 4px #fff; animation: flash-sell-3 0.45s infinite alternate;
+    }
+
+    /* 🛡️ 承接 2 階 (直立柱狀防守) */
+    .pillar-lamp.watching-acc {
+      background: linear-gradient(180deg, #d97706, #b45309); color: #fff; border-color: #fde68a;
+      box-shadow: 0 0 12px rgba(217, 119, 6, 0.9); animation: flash-acc-watch 0.8s infinite alternate;
+    }
+    .pillar-lamp.active-acc {
+      background: linear-gradient(180deg, #f59e0b, #fbbf24, #f59e0b, #d97706); background-size: 200% 200%;
+      color: #070b14; font-weight: 900; border-color: #fff; box-shadow: 0 0 22px rgba(245, 158, 11, 1), inset 0 0 5px #fff;
+      animation: flash-acc-gold 0.4s infinite alternate, rainbow-bg 2s infinite linear;
+    }
+
+    @keyframes flash-acc-watch { from { opacity: 0.65; } to { opacity: 1; } }
+    @keyframes flash-acc-gold { from { opacity: 0.8; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+    @keyframes flash-buy-1 { from { opacity: 0.6; } to { opacity: 1; } }
+    @keyframes flash-buy-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+    @keyframes flash-buy-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+    @keyframes flash-buy-rainbow { from { opacity: 0.85; transform: scale(0.96); } to { opacity: 1; transform: scale(1.04); } }
+    @keyframes flash-sell-1 { from { opacity: 0.6; } to { opacity: 1; } }
+    @keyframes flash-sell-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+    @keyframes flash-sell-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
+    @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  </style>
+</head>
+<body>
+  <div class="hud-sidebar">
+    <!-- Header -->
+    <div class="hud-topbar">
+      <div class="brand-row">
+        <span class="status-dot" id="statusDot"></span>
+        Stock<span>Radar</span>
+      </div>
+      <div class="clock-row" id="updateClock">--:--:--</div>
+    </div>
+
+    <!-- 5 Stock Cards (Stacked Vertically) -->
+    <div id="stocksCol" style="display:flex; flex-direction:column; gap:4px; flex:1; min-height:0;"></div>
+  </div>
+
+  <script>
+    const ids = name => document.getElementById(name);
+    let symbols = ["3406", "3324", "4958", "3450", "6669"];
+    let symbolNames = { "2455": "全新", "3324": "雙鴻", "3406": "玉晶光", "3450": "聯鈞", "4958": "臻鼎-KY", "6669": "緯穎", "2330": "台積電", "2317": "鴻海" };
+    let symbolReferences = { "2455": 477.0, "3324": 1250.0, "3406": 1005.0, "3450": 646.0, "4958": 500.0, "6669": 2615.0, "2330": 1080.0, "2317": 215.0 };
+    let symbolDispositions = { "3406": "2分" };
+    let symbolThresholds = {};
+    let snapshots = {};
+
+    function getDefaultThreshold(price) {
+      if (price >= 1000) return 5;
+      if (price >= 500) return 10;
+      if (price >= 300) return 15;
+      if (price >= 100) return 20;
+      return 50;
+    }
+
+    function getSymbolThreshold(sym, refP) {
+      if (symbolThresholds[sym] && symbolThresholds[sym] > 0) return symbolThresholds[sym];
+      const saved = localStorage.getItem('stockRadarSymbolThresholds');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed[sym] && parsed[sym] > 0) return parsed[sym];
+        } catch {}
+      }
+      return getDefaultThreshold(refP || 500);
+    }
+
+    function calcTier(vol, threshold) {
+      if (vol < threshold) return 0;
+      const step = threshold * 0.5;
+      if (vol > threshold + 2 * step) return 4;
+      if (vol >= threshold + 2 * step) return 3;
+      if (vol >= threshold + 1 * step) return 2;
+      return 1;
+    }
+
+    async function loadWatchlist() {
+      try {
+        const res = await fetch('../data/watchlist.json?ts=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.symbols) symbols = data.symbols.map(String).slice(0, 5);
+          if (data.names) symbolNames = { ...symbolNames, ...data.names };
+          if (data.references) symbolReferences = { ...symbolReferences, ...data.references };
+          if (data.dispositions) symbolDispositions = { ...symbolDispositions, ...data.dispositions };
+        }
+      } catch {}
+
+      const savedSyms = localStorage.getItem('stockRadarCustomSymbols');
+      if (savedSyms) {
+        try {
+          const parsed = JSON.parse(savedSyms);
+          if (Array.isArray(parsed) && parsed.length > 0) symbols = parsed.map(String).slice(0, 5);
+        } catch {}
+      }
+    }
+
+    function renderHUD() {
+      const container = ids('stocksCol');
+      container.replaceChildren();
+
+      const refTime = Date.now();
+      const LAMP_WINDOW_MS = 5000;
+
+      symbols.forEach((sym, colIdx) => {
+        const snap = snapshots[sym];
+        const name = symbolNames[sym] || sym;
+        const refP = symbolReferences[sym] || 100;
+        const minVol = getSymbolThreshold(sym, refP);
+
+        // Price & Change (支援 latest_tick 或 latest_bar 自動備援)
+        const tick = snap?.latest_tick;
+        const bar = snap?.latest_bar;
+        const price = tick ? Number(tick.price) : (bar ? Number(bar.close) : null);
+        let change = tick && tick.change_percent !== null ? Number(tick.change_percent) : null;
+        if (change === null && price !== null && refP > 0) {
+          change = ((price - refP) / refP) * 100;
+        }
+        let priceClass = 'price-flat', changeText = '--';
+        if (Number.isFinite(change)) {
+          priceClass = change > 0 ? 'price-up' : change < 0 ? 'price-down' : 'price-flat';
+          changeText = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+        }
+
+        const disp = snap?.disposition || symbolDispositions[sym];
+        const dispIcon = disp ? `<span class="disp-warn-icon" title="⚠️ 處置股票（2分鐘撮合）">⚠️</span>` : '';
+
+        // Calculate Lamps
+        const askPrints = (snap?.at_ask_prints || []).filter(p => Number(p.volume) >= minVol);
+        const bidPrints = (snap?.at_bid_prints || []).filter(p => Number(p.volume) >= minVol);
+        const latestBuy = askPrints.at(-1);
+        const latestSell = bidPrints.at(-1);
+
+        const timeBuy = latestBuy ? Date.parse(latestBuy.timestamp) : 0;
+        const timeSell = latestSell ? Date.parse(latestSell.timestamp) : 0;
+        const hasRecentBuy = latestBuy && (refTime - timeBuy <= LAMP_WINDOW_MS);
+        const hasRecentSell = latestSell && (refTime - timeSell <= LAMP_WINDOW_MS);
+
+        const recentAskVols = (snap?.at_ask_prints || [])
+          .filter(p => {
+            const age = refTime - Date.parse(p.timestamp);
+            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
+          })
+          .map(p => Number(p.volume));
+        const maxBuyVol = recentAskVols.length ? Math.max(...recentAskVols) : 0;
+
+        const recentBidVols = (snap?.at_bid_prints || [])
+          .filter(p => {
+            const age = refTime - Date.parse(p.timestamp);
+            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
+          })
+          .map(p => Number(p.volume));
+        const maxSellVol = recentBidVols.length ? Math.max(...recentBidVols) : 0;
+
+        const buyTier = hasRecentBuy ? calcTier(maxBuyVol, minVol) : 0;
+        const sellTier = hasRecentSell ? calcTier(maxSellVol, minVol) : 0;
+
+        const buyClass = buyTier > 0 ? `buy-tier-${buyTier}` : '';
+        const sellClass = sellTier > 0 ? `sell-tier-${sellTier}` : '';
+        const buyIcon = buyTier >= 4 ? '✨' : buyTier >= 3 ? '🔥' : '🔴';
+        const sellIcon = sellTier >= 3 ? '⚡' : '🟢';
+        const buySub = buyTier === 2 ? '+' : buyTier >= 3 ? '!!!' : '';
+        const sellSub = sellTier === 2 ? '-' : sellTier >= 3 ? '!!!' : '';
+
+        const acc = snap?.accumulation_signal;
+        const recentAccBuyCount = (snap?.at_ask_prints || []).filter(p => {
+          const age = refTime - Date.parse(p.timestamp);
+          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
+        }).length;
+        const recentAccSellCount = (snap?.at_bid_prints || []).filter(p => {
+          const age = refTime - Date.parse(p.timestamp);
+          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
+        }).length;
+        const hasRecentAccAction = recentAccBuyCount > 0 ||
+          (Boolean(acc?.conditions?.sell_absorbed) && recentAccSellCount > 0);
+
+        const accActive = Boolean(acc && acc.active && hasRecentAccAction);
+        const accWatching = Boolean(acc && acc.watching && !acc.active && hasRecentAccAction);
+        const attackConfirmed = Boolean(accActive && acc?.stage === 'ATTACK_CONFIRMED');
+        const accClass = accActive ? 'active-acc' : accWatching ? 'watching-acc' : '';
+        const accIcon = attackConfirmed ? '⚡' : accActive ? '✨' : '🛡️';
+        const accSub = accActive ? '!!!' : accWatching ? '?' : '';
+
+        // Build Stock Card: Row 1 Name (20%), Row 2 Price (20%), Row 3 Pillar Lamps (60%)
+        const themeIndex = colIdx % 5;
+        const card = document.createElement('div');
+        card.className = `stock-hud-card col-theme-${themeIndex}`;
+        card.innerHTML = `
+          <!-- 第 1 排：股票名稱 + 代號 (佔比 1/5) -->
+          <div class="card-name-row">
+            <span class="stock-name" title="${name} (${sym})">${name}</span>
+            <span class="stock-code">${sym}</span>
+          </div>
+
+          <!-- 第 2 排：股價 + 漲跌幅 (佔比 1/5) -->
+          <div class="card-price-row">
+            <div style="display:flex; align-items:baseline; gap:3px;">
+              <span class="stock-price ${priceClass}">${price !== null ? price.toFixed(1) : '--'}</span>
+              ${dispIcon}
+            </div>
+            <span class="stock-change ${priceClass}">${changeText}</span>
+          </div>
+
+          <!-- 第 3 排：三大巨型直立燈柱並排 (佔比 3/5) -->
+          <div class="card-lamp-row">
+            <div class="pillar-lamp ${buyClass}" title="${buyTier > 0 ? `掃貨 Lv.${buyTier}` : '無掃貨大單'}">
+              <span class="pillar-icon">${buyIcon}</span>
+              <span class="pillar-text">掃</span>
+              <span class="pillar-text">貨</span>
+              <span class="pillar-sub">${buySub}</span>
+            </div>
+            <div class="pillar-lamp ${sellClass}" title="${sellTier > 0 ? `倒貨 Lv.${sellTier}` : '無倒貨大單'}">
+              <span class="pillar-icon">${sellIcon}</span>
+              <span class="pillar-text">倒</span>
+              <span class="pillar-text">貨</span>
+              <span class="pillar-sub">${sellSub}</span>
+            </div>
+            <div class="pillar-lamp ${accClass}" title="${attackConfirmed ? '轉攻擊確認：站上 VWAP 且放量突破' : accActive ? '低檔承接條件確認' : accWatching ? '承接證據仍在形成' : '無承接'}">
+              <span class="pillar-icon">${accIcon}</span>
+              <span class="pillar-text">${attackConfirmed ? '轉' : '承'}</span>
+              <span class="pillar-text">${attackConfirmed ? '攻' : '接'}</span>
+              <span class="pillar-sub">${accSub}</span>
+            </div>
+          </div>
+        `;
+        container.append(card);
+      });
+
+      // Update Topbar Clock
+      ids('updateClock').textContent = new Date().toTimeString().slice(0, 8);
+    }
+
+    async function refresh() {
+      try {
+        const received = await Promise.all(symbols.map(async s => {
+          const res = await fetch(`../data/live/${s}.json?ts=${Date.now()}`, { cache: 'no-store' });
+          return [s, res.ok ? await res.json() : null];
+        }));
+        snapshots = Object.fromEntries(received);
+        renderHUD();
+
+        const now = Date.now();
+        const validSnapshots = Object.values(snapshots).filter(Boolean);
+        const fresh = validSnapshots.filter(snapshot => {
+          const updatedAt = Date.parse(snapshot?.updated_at || '');
+          return Number.isFinite(updatedAt) && now - updatedAt >= 0 && now - updatedAt <= 180000;
+        }).length;
+
+        if (fresh) {
+          ids('statusDot').className = 'status-dot';
+        } else if (validSnapshots.length) {
+          ids('statusDot').className = 'status-dot sim';
+        } else {
+          ids('statusDot').className = 'status-dot stale';
+        }
+      } catch (e) {
+        ids('statusDot').className = 'status-dot stale';
+      }
+    }
+
+    async function init() {
+      await loadWatchlist();
+      await refresh();
+      setInterval(refresh, 1000);
+    }
+
+    init();
+  </script>
+</body>
+</html>

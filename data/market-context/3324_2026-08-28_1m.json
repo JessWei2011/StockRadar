@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0",
+  "source_replay": "shioaji_historical_kbars",
+  "symbol": "3324",
+  "market_date": "2026-08-28",
+  "timeframe": "1m",
+  "parameters": {
+    "volume_window": 20,
+    "high_volume_ratio": 2.0,
+    "bullish_close_position_min": 0.65,
+    "bearish_close_position_max": 0.35
+  },
+  "contexts": [
+    {
+      "timestamp": "2026-08-28T09:46:00+08:00",
+      "event_type": "BREAKOUT_OCCURRED",
+      "event_title": "突破發生",
+      "posture": "PRICE_VOLUME_BULLISH",
+      "title": "量價偏多",
+      "summary": "量比 6.67 倍，收在本根振幅上緣 100%；量價偏多，對應事件：突破發生。",
+      "volume_ratio": 6.67,
+      "close_position": 1.0,
+      "key_high": 1120.0,
+      "key_low": 1120.0
+    },
+    {
+      "timestamp": "2026-08-28T09:48:00+08:00",
+      "event_type": "SELL_PRESSURE_OCCURRED",
+      "event_title": "賣壓發生",
+      "posture": "PRICE_VOLUME_BEARISH",
+      "title": "量價偏空",
+      "summary": "量比 2.59 倍，收在本根振幅下緣 0%；量價偏空，對應事件：賣壓發生。",
+      "volume_ratio": 2.59,
+      "close_position": 0.0,
+      "key_high": 1125.0,
+      "key_low": 1120.0
+    },
+    {
+      "timestamp": "2026-08-28T09:57:00+08:00",
+      "event_type": "SELL_PRESSURE_RELEASED",
+      "event_title": "賣壓解除／重新轉強",
+      "posture": "PRICE_VOLUME_CONFLICT",
+      "title": "量價矛盾",
+      "summary": "量比 0.51 倍，收盤位置 0%；量價未形成同向優勢，對應事件：賣壓解除／重新轉強。",
+      "volume_ratio": 0.51,
+      "close_position": 0.0,
+      "key_high": 1125.0,
+      "key_low": 1130.0
+    },
+    {
+      "timestamp": "2026-08-28T10:12:00+08:00",
+      "event_type": "BREAKOUT_OCCURRED",
+      "event_title": "突破發生",
+      "posture": "PRICE_VOLUME_BULLISH",
+      "title": "量價偏多",
+      "summary": "量比 14.26 倍，收在本根振幅上緣 100%；量價偏多，對應事件：突破發生。",
+      "volume_ratio": 14.26,
+      "close_position": 1.0,
+      "key_high": 1135.0,
+      "key_low": 1135.0
+    },
+    {
+      "timestamp": "2026-08-28T10:16:00+08:00",
+      "event_type": "BREAKOUT_CONTINUES",
+      "event_title": "突破延續",
+      "posture": "PRICE_VOLUME_BULLISH",
+      "title": "量價偏多",
+      "summary": "量比 9.36 倍，收在本根振幅上緣 100%；量價偏多，對應事件：突破延續。",
+      "volume_ratio": 9.36,
+      "close_position": 1.0,
+      "key_high": 1135.0,
+      "key_low": 1145.0
+    },
+    {
+      "timestamp": "2026-08-28T10:40:00+08:00",
+      "event_type": "SELL_PRESSURE_OCCURRED",
+      "event_title": "賣壓發生",
+      "posture": "PRICE_VOLUME_BEARISH",
+      "title": "量價偏空",
+      "summary": "量比 9.38 倍，收在本根振幅下緣 0%；量價偏空，對應事件：賣壓發生。",
+      "volume_ratio": 9.38,
+      "close_position": 0.0,
+      "key_high": 1135.0,
+      "key_low": 1130.0
+    },
+    {
+      "timestamp": "2026-08-28T10:58:00+08:00",
+      "event_type": "SELL_PRESSURE_CONTINUES",
+      "event_title": "賣壓延續",
+      "posture": "PRICE_VOLUME_CONFLICT",
+      "title": "量價矛盾",
+      "summary": "量比 7.43 倍，但本根 K 無振幅，無法判讀收盤位置；量價矛盾，對應事件：賣壓延續。",
+      "volume_ratio": 7.43,
+      "close_position": null,
+      "key_high": 1125.0,
+      "key_low": 1130.0
+    },
+    {
+      "timestamp": "2026-08-28T11:40:00+08:00",
+      "event_type": "SELL_PRESSURE_RELEASED",
+      "event_title": "賣壓解除／重新轉強",
+      "posture": "PRICE_VOLUME_BULLISH",
+      "title": "量價偏多",
+      "summary": "量比 5.78 倍，收在本根振幅上緣 100%；量價偏多，對應事件：賣壓解除／重新轉強。",
+      "volume_ratio": 5.78,
+      "close_position": 1.0,
+      "key_high": 1135.0,
+      "key_low": 1140.0
+    },
+    {
+      "timestamp": "2026-08-28T11:48:00+08:00",
+      "event_type": "SELL_PRESSURE_OCCURRED",
+      "event_title": "賣壓發生",
+      "posture": "PRICE_VOLUME_BEARISH",
+      "title": "量價偏空",
+      "summary": "量比 6.73 倍，收在本根振幅下緣 0%；量價偏空，對應事件：賣壓發生。",
+      "volume_ratio": 6.73,
+      "close_position": 0.0,
+      "key_high": 1145.0,
+      "key_low": 1140.0
+    },
+    {
+      "timestamp": "2026-08-28T12:01:00+08:00",
+      "event_type": "SELL_PRESSURE_CONTINUES",
+      "event_title": "賣壓延續",
+      "posture": "PRICE_VOLUME_CONFLICT",
+      "title": "量價矛盾",
+      "summary": "量比 0.20 倍，但本根 K 無振幅，無法判讀收盤位置；量價矛盾，對應事件：賣壓延續。",
+      "volume_ratio": 0.2,
+      "close_position": null,
+      "key_high": 1135.0,
+      "key_low": 1140.0
+    }
+  ]
+}
