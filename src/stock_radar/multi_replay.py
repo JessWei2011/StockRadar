@@ -10,6 +10,7 @@ import time
 from typing import Any, Mapping
 
 from .accumulation import detect_potential_accumulation
+from .live_collector import OrderFlowPowerTracker
 from .pressure_gauge import generate_pressure_readings
 
 SYMBOLS = ["2455", "3324", "3406", "3450", "4958"]
@@ -52,6 +53,8 @@ def run_replay(market_date: str = "2026-09-01", speed: int = 5) -> None:
     ask_prints: dict[str, list[dict[str, Any]]] = {sym: [] for sym in SYMBOLS}
     bid_prints: dict[str, list[dict[str, Any]]] = {sym: [] for sym in SYMBOLS}
     total_volumes: dict[str, float] = {sym: 0.0 for sym in SYMBOLS}
+    order_flow_trackers: dict[str, OrderFlowPowerTracker] = {sym: OrderFlowPowerTracker() for sym in SYMBOLS}
+    thresholds = {"3324": 10, "2455": 10, "3406": 10, "3450": 15, "4958": 20}
 
     for idx in range(total_bars):
         current_time_str = ""
@@ -96,6 +99,14 @@ def run_replay(market_date: str = "2026-09-01", speed: int = 5) -> None:
                         bid_prints[sym].append(record)
                         del bid_prints[sym][:-100]
 
+                    order_flow_trackers[sym].update(
+                        current_time_str,
+                        ask_price if p_is_buy else bid_price,
+                        int(p_vol),
+                        is_buy=p_is_buy,
+                        threshold=thresholds.get(sym, 10),
+                    )
+
             latest_tick = {
                 "timestamp": current_time_str,
                 "price": close_price,
@@ -126,6 +137,7 @@ def run_replay(market_date: str = "2026-09-01", speed: int = 5) -> None:
                 "accumulation_signal": acc_signal,
                 "at_ask_prints": ask_prints[sym],
                 "at_bid_prints": bid_prints[sym],
+                "order_flow_power": order_flow_trackers[sym].to_dict(thresholds.get(sym, 10)),
             }
 
             dest = live_dir / f"{sym}.json"

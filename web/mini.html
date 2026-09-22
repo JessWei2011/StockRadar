@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StockRadar 直式巨型燈柱 HUD</title>
+  <title>StockRadar 迷你買賣力 HUD</title>
   <style>
     :root {
       --bg: #05080f;
@@ -58,14 +58,26 @@
     .status-dot.sim { background: var(--replay); box-shadow: 0 0 5px var(--replay); animation: none; }
     @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
+    .topbar-right {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .topbar-reset-btn {
+      background: transparent; border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #94a3b8; border-radius: 3px; font-size: 0.58rem; font-weight: 700;
+      padding: 1px 4px; cursor: pointer; line-height: 1; transition: all 0.15s ease;
+    }
+    .topbar-reset-btn:hover {
+      background: #1e293b; color: #fff; border-color: var(--accent);
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+    }
     .clock-row {
       font-size: 0.62rem; color: #94a3b8; font-variant-numeric: tabular-nums; font-weight: 700;
     }
 
-    /* 5 Stock Cards (5 檔垂直堆疊，每檔卡片高度分配: 1/5 名稱, 1/5 股價, 3/5 巨型燈柱) */
+    /* 5 Stock Cards (5 檔垂直堆疊，每檔卡片高度分配: 名稱門檻、現價漲跌、大戶散戶買賣力長條圖) */
     .stock-hud-card {
       display: flex; flex-direction: column; justify-content: space-between;
-      border-radius: 5px; padding: 3px 6px; min-height: 0; flex: 1;
+      border-radius: 5px; padding: 4px 6px; min-height: 0; flex: 1;
       border: 1px solid var(--border); gap: 2px;
       transition: all 0.15s;
     }
@@ -93,100 +105,198 @@
       border-color: #86198f;
     }
 
-    /* 第一排：股名與代號 (佔比 1/5 ~20%) */
+    /* 第一排：股名、代號與獨立門檻控制組 */
     .card-name-row {
       display: flex; justify-content: space-between; align-items: center;
-      height: 20%; min-height: 18px; line-height: 1; white-space: nowrap;
+      line-height: 1; white-space: nowrap; gap: 4px;
+    }
+    .name-box {
+      display: flex; align-items: baseline; gap: 4px; min-width: 0; overflow: hidden;
     }
     .stock-name {
-      font-size: 0.92rem; font-weight: 900; color: #fff; overflow: hidden; text-overflow: ellipsis;
+      font-size: 0.92rem; font-weight: 900; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .stock-code {
-      font-size: 0.72rem; color: #cbd5e1; font-variant-numeric: tabular-nums; opacity: 0.85; font-weight: 700;
+      font-size: 0.70rem; color: #cbd5e1; font-variant-numeric: tabular-nums; opacity: 0.85; font-weight: 700;
     }
 
-    /* 第二排：現價 ⚠️ + 漲跌幅 (佔比 1/5 ~20%) */
+    .thresh-group {
+      display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+    }
+    .thresh-badge {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent);
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.1;
+    }
+    .thresh-badge.custom {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: rgba(245, 158, 11, 0.55);
+      color: #fbbf24;
+    }
+    .thresh-badge:hover {
+      background: rgba(56, 189, 248, 0.3);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+    }
+    .thresh-reset-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      border-radius: 3px;
+      font-size: 0.62rem;
+      font-weight: 900;
+      padding: 1px 4px;
+      cursor: pointer;
+      line-height: 1.1;
+      transition: all 0.15s ease;
+    }
+    .thresh-reset-btn:hover {
+      background: #ef4444; color: #fff; border-color: #ef4444;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+    }
+
+    /* 第二排：現價 ⚠️ + 漲跌幅 */
     .card-price-row {
       display: flex; justify-content: space-between; align-items: baseline;
-      height: 20%; min-height: 18px; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap;
+      line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap;
+      margin: 1px 0;
     }
-    .stock-price { font-size: 1.15rem; font-weight: 900; }
-    .stock-change { font-size: 0.86rem; font-weight: 800; }
+    .stock-price { font-size: 1.12rem; font-weight: 900; }
+    .stock-change { font-size: 0.84rem; font-weight: 800; }
     .price-up { color: var(--up); }
     .price-down { color: var(--down); }
     .price-flat { color: var(--muted); }
     .disp-warn-icon { font-size: 0.78rem; cursor: help; user-select: none; line-height: 1; }
 
-    /* 第三排：三大並排直立巨型燈柱 (佔比 3/5 ~60%) */
-    .card-lamp-row {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;
-      height: 58%; flex: 1; align-items: stretch;
+    /* 第三區塊：大戶／散戶買賣力雙層長條圖 (參考 IMG_5768.png) */
+    .card-power-section {
+      display: flex; flex-direction: column;
+      gap: 2px; flex: 1; min-height: 0; justify-content: space-between;
     }
-    .pillar-lamp {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      border-radius: 4px; font-weight: 900; line-height: 1.15;
-      background: rgba(10, 15, 28, 0.85); color: #475569; border: 1px solid rgba(255,255,255,0.08);
-      text-align: center; padding: 2px 1px; transition: all 0.2s ease;
-      height: 100%;
+    .power-block {
+      display: flex; flex-direction: column; gap: 1px;
     }
-    .pillar-icon { font-size: 0.82rem; margin-bottom: 2px; }
-    .pillar-text { font-size: 0.76rem; font-weight: 900; }
-    .pillar-sub { font-size: 0.68rem; font-weight: 900; margin-top: 1px; }
-
-    /* 🔴 掃貨 4 階 (直立柱狀爆發) */
-    .pillar-lamp.buy-tier-1 {
-      background: linear-gradient(180deg, #dc2626, #991b1b); color: #fff; border-color: #fca5a5;
-      box-shadow: 0 0 10px rgba(220, 38, 38, 0.85); animation: flash-buy-1 0.7s infinite alternate;
+    .power-stat-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 0.65rem; line-height: 1.1; font-variant-numeric: tabular-nums;
     }
-    .pillar-lamp.buy-tier-2 {
-      background: linear-gradient(180deg, #ef4444, #ea580c); color: #fff; border-color: #fdba74;
-      box-shadow: 0 0 14px rgba(234, 88, 12, 0.95); animation: flash-buy-2 0.55s infinite alternate;
+    .stat-title {
+      font-weight: 800; color: #94a3b8; font-size: 0.64rem;
     }
-    .pillar-lamp.buy-tier-3 {
-      background: linear-gradient(180deg, #f97316, #eab308); color: #070b14; font-weight: 900; border-color: #fef08a;
-      box-shadow: 0 0 18px rgba(234, 179, 8, 1), inset 0 0 4px #fff; animation: flash-buy-3 0.45s infinite alternate;
+    .stat-net {
+      font-weight: 900; font-size: 0.72rem;
     }
-    .pillar-lamp.buy-tier-4 {
-      background: linear-gradient(180deg, #ff0055, #f59e0b, #eab308, #ec4899); background-size: 200% 200%;
-      color: #fff; font-weight: 900; border-color: #fff; box-shadow: 0 0 22px rgba(255, 215, 0, 1), inset 0 0 6px #fff;
-      animation: flash-buy-rainbow 0.35s infinite alternate, rainbow-bg 2s infinite linear;
+    .stat-vwap {
+      font-size: 0.62rem; color: #64748b; font-weight: 600;
     }
 
-    /* 🟢 倒貨 4 階 (直立柱狀灌殺) */
-    .pillar-lamp.sell-tier-1 {
-      background: linear-gradient(180deg, #16a34a, #166534); color: #fff; border-color: #86efac;
-      box-shadow: 0 0 10px rgba(22, 163, 74, 0.85); animation: flash-sell-1 0.7s infinite alternate;
+    .power-chart-box {
+      position: relative;
+      width: 100%;
+      height: 25px;
+      background: rgba(5, 10, 20, 0.75);
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
     }
-    .pillar-lamp.sell-tier-2 {
-      background: linear-gradient(180deg, #22c55e, #059669); color: #fff; border-color: #a7f3d0;
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.95); animation: flash-sell-2 0.55s infinite alternate;
+    .power-svg {
+      position: absolute; left: 0; top: 0; width: 100%; height: 100%;
     }
-    .pillar-lamp.sell-tier-3, .pillar-lamp.sell-tier-4 {
-      background: linear-gradient(180deg, #10b981, #84cc16); color: #070b14; font-weight: 900; border-color: #d9f99d;
-      box-shadow: 0 0 18px rgba(132, 204, 22, 1), inset 0 0 4px #fff; animation: flash-sell-3 0.45s infinite alternate;
-    }
-
-    /* 🛡️ 承接 2 階 (直立柱狀防守) */
-    .pillar-lamp.watching-acc {
-      background: linear-gradient(180deg, #d97706, #b45309); color: #fff; border-color: #fde68a;
-      box-shadow: 0 0 12px rgba(217, 119, 6, 0.9); animation: flash-acc-watch 0.8s infinite alternate;
-    }
-    .pillar-lamp.active-acc {
-      background: linear-gradient(180deg, #f59e0b, #fbbf24, #f59e0b, #d97706); background-size: 200% 200%;
-      color: #070b14; font-weight: 900; border-color: #fff; box-shadow: 0 0 22px rgba(245, 158, 11, 1), inset 0 0 5px #fff;
-      animation: flash-acc-gold 0.4s infinite alternate, rainbow-bg 2s infinite linear;
+    .power-scale {
+      position: absolute; left: 2px; top: 0; bottom: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      font-size: 0.50rem; line-height: 1; color: rgba(255, 255, 255, 0.45);
+      pointer-events: none; z-index: 2; font-variant-numeric: tabular-nums;
+      padding: 1px 0;
     }
 
-    @keyframes flash-acc-watch { from { opacity: 0.65; } to { opacity: 1; } }
-    @keyframes flash-acc-gold { from { opacity: 0.8; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
-    @keyframes flash-buy-1 { from { opacity: 0.6; } to { opacity: 1; } }
-    @keyframes flash-buy-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
-    @keyframes flash-buy-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
-    @keyframes flash-buy-rainbow { from { opacity: 0.85; transform: scale(0.96); } to { opacity: 1; transform: scale(1.04); } }
-    @keyframes flash-sell-1 { from { opacity: 0.6; } to { opacity: 1; } }
-    @keyframes flash-sell-2 { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
-    @keyframes flash-sell-3 { from { opacity: 0.75; transform: scale(0.97); } to { opacity: 1; transform: scale(1.03); } }
-    @keyframes rainbow-bg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .power-time-row {
+      display: flex; justify-content: space-between; padding: 0 4px;
+      font-size: 0.58rem; font-weight: 700; color: #64748b; line-height: 1;
+      margin-top: 1px;
+    }
+
+    /* JSON 設定彈窗 */
+    .json-modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; padding: 8px;
+    }
+    .json-modal-card {
+      background: #0d1527; border: 1px solid #1e293b;
+      border-radius: 8px; width: 100%; max-width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      display: flex; flex-direction: column; gap: 8px; padding: 12px;
+    }
+    .json-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .json-modal-title {
+      font-size: 0.82rem; font-weight: 800; color: #fff;
+    }
+    .json-close-btn {
+      background: transparent; border: none; color: #94a3b8;
+      font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0 4px;
+    }
+    .json-close-btn:hover { color: #fff; }
+    .json-modal-sub {
+      font-size: 0.65rem; color: #94a3b8; line-height: 1.3;
+    }
+    .json-quick-actions {
+      display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    }
+    .json-pill-btn {
+      background: #1e293b; border: 1px solid #334155;
+      color: #cbd5e1; border-radius: 4px; font-size: 0.60rem;
+      padding: 2px 5px; cursor: pointer; transition: all 0.15s;
+    }
+    .json-pill-btn:hover {
+      background: #334155; color: #fff; border-color: var(--accent);
+    }
+    .json-textarea {
+      width: 100%; height: 160px; background: #070c18;
+      border: 1px solid #334155; border-radius: 6px;
+      color: #38bdf8; font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.72rem; line-height: 1.4; padding: 8px; resize: vertical; box-sizing: border-box;
+      outline: none;
+    }
+    .json-textarea:focus { border-color: var(--accent); }
+    .json-status-msg {
+      font-size: 0.65rem; min-height: 16px; line-height: 1.2;
+    }
+    .json-modal-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 6px; margin-top: 2px;
+    }
+    .json-footer-left, .json-footer-right {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .json-btn {
+      border-radius: 4px; font-size: 0.66rem; font-weight: 700;
+      padding: 3px 8px; cursor: pointer; transition: all 0.15s; line-height: 1.2;
+    }
+    .json-btn.primary {
+      background: #2563eb; color: #fff; border: 1px solid #3b82f6;
+    }
+    .json-btn.primary:hover { background: #1d4ed8; }
+    .json-btn.cancel {
+      background: #1e293b; color: #94a3b8; border: 1px solid #334155;
+    }
+    .json-btn.cancel:hover { background: #334155; color: #fff; }
+    .json-btn.secondary {
+      background: #0f172a; color: #cbd5e1; border: 1px solid #334155;
+    }
+    .json-btn.secondary:hover { background: #1e293b; color: #fff; }
   </style>
 </head>
 <body>
@@ -194,31 +304,68 @@
     <!-- Header -->
     <div class="hud-topbar">
       <div class="brand-row">
-        <span class="status-dot" id="statusDot"></span>
-        Stock<span>Radar</span>
+        <span id="statusDot" class="status-dot"></span>
+        <b>RADAR</b><span>·POWER</span>
       </div>
-      <div class="clock-row" id="updateClock">--:--:--</div>
+      <div class="topbar-right">
+        <button class="topbar-reset-btn" onclick="openJsonModal()" title="使用 JSON 快速設定五檔個股與門檻">⚙️ JSON</button>
+        <button class="topbar-reset-btn" onclick="resetAllThresholds(event)" title="將所有個股的大單門檻全數恢復為系統預設值">↺ 全部預設</button>
+        <div class="clock-row" id="updateClock">--:--:--</div>
+      </div>
     </div>
 
     <!-- 5 Stock Cards (Stacked Vertically) -->
     <div id="stocksCol" style="display:flex; flex-direction:column; gap:4px; flex:1; min-height:0;"></div>
   </div>
 
+  <!-- JSON Configuration Modal -->
+  <div id="jsonModal" class="json-modal-backdrop" style="display:none;" onclick="if(event.target===this)closeJsonModal()">
+    <div class="json-modal-card">
+      <div class="json-modal-header">
+        <div class="json-modal-title">⚙️ 五檔個股 JSON 設定</div>
+        <button class="json-close-btn" onclick="closeJsonModal()">&times;</button>
+      </div>
+      <div class="json-modal-sub">
+        支援代號陣列或包含門檻的物件，最多 5 檔個股：
+      </div>
+      <div class="json-quick-actions">
+        <span style="font-size:0.60rem; color:#94a3b8; font-weight:700;">範本：</span>
+        <button class="json-pill-btn" onclick="loadJsonTemplate('standard')">標準物件</button>
+        <button class="json-pill-btn" onclick="loadJsonTemplate('array')">代號陣列</button>
+        <button class="json-pill-btn" onclick="loadJsonTemplate('objects')">清單明細</button>
+      </div>
+      <textarea id="jsonConfigArea" class="json-textarea" spellcheck="false" placeholder="請在此貼上或編輯 JSON..."></textarea>
+      <div id="jsonModalStatus" class="json-status-msg"></div>
+      <div class="json-modal-footer">
+        <div class="json-footer-left">
+          <button class="json-btn secondary" onclick="copyJsonConfig(this)">📋 複製</button>
+        </div>
+        <div class="json-footer-right">
+          <button class="json-btn cancel" onclick="closeJsonModal()">取消</button>
+          <button class="json-btn primary" onclick="saveJsonConfig()">💾 儲存並套用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const ids = name => document.getElementById(name);
     let symbols = ["3406", "3324", "4958", "3450", "6669"];
-    let symbolNames = { "2455": "全新", "3324": "雙鴻", "3406": "玉晶光", "3450": "聯鈞", "4958": "臻鼎-KY", "6669": "緯穎", "2330": "台積電", "2317": "鴻海" };
-    let symbolReferences = { "2455": 477.0, "3324": 1250.0, "3406": 1005.0, "3450": 646.0, "4958": 500.0, "6669": 2615.0, "2330": 1080.0, "2317": 215.0 };
+    let symbolNames = { "2455": "全新", "3324": "雙鴻", "3406": "玉晶光", "3450": "聯鈞", "4958": "臻鼎-KY", "6669": "緯穎", "2330": "台積電", "2317": "鴻海", "6257": "矽格" };
+    let symbolReferences = { "2455": 477.0, "3324": 1250.0, "3406": 1005.0, "3450": 646.0, "4958": 500.0, "6669": 2615.0, "2330": 1080.0, "2317": 215.0, "6257": 250.5 };
     let symbolDispositions = { "3406": "2分" };
     let symbolThresholds = {};
     let snapshots = {};
 
+    // 系統依昨收參考價推估之 6 階梯式標準大戶門檻（單筆約 300 萬～500 萬元）
     function getDefaultThreshold(price) {
-      if (price >= 1000) return 5;
-      if (price >= 500) return 10;
-      if (price >= 300) return 15;
-      if (price >= 100) return 20;
-      return 50;
+      const p = Number(price) || 100;
+      if (p >= 1000) return 5;   // ≥1000元 (千金股): 5張 (約500萬)
+      if (p >= 500) return 8;    // 500~1000元: 8張 (約400~500萬)
+      if (p >= 200) return 15;   // 200~500元 (如矽格): 15張 (約300~450萬)
+      if (p >= 100) return 25;   // 100~200元: 25張 (約250~400萬)
+      if (p >= 50) return 50;    // 50~100元: 50張 (約250~400萬)
+      return 80;                 // <50元 (低價銅板股): 80張 (約200~400萬)
     }
 
     function getSymbolThreshold(sym, refP) {
@@ -227,19 +374,319 @@
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (parsed[sym] && parsed[sym] > 0) return parsed[sym];
+          if (parsed[sym] && parsed[sym] > 0) {
+            symbolThresholds[sym] = Number(parsed[sym]);
+            return symbolThresholds[sym];
+          }
         } catch {}
       }
       return getDefaultThreshold(refP || 500);
     }
 
-    function calcTier(vol, threshold) {
-      if (vol < threshold) return 0;
-      const step = threshold * 0.5;
-      if (vol > threshold + 2 * step) return 4;
-      if (vol >= threshold + 2 * step) return 3;
-      if (vol >= threshold + 1 * step) return 2;
-      return 1;
+    function editThreshold(sym, e) {
+      if (e) e.stopPropagation();
+      const name = symbolNames[sym] || sym;
+      const refP = symbolReferences[sym] || 100;
+      const defT = getDefaultThreshold(refP);
+      const current = getSymbolThreshold(sym, refP);
+      const input = prompt(
+        `【${name} (${sym})】大單門檻設定：\n` +
+        `• 目前設定：${current} 張\n` +
+        `• 系統依昨收價 (${refP.toFixed(1)}元) 推薦預設值：${defT} 張\n\n` +
+        `請輸入自訂門檻張數（輸入 0 或留空可直接恢復預設 ${defT} 張）：`,
+        current
+      );
+      if (input !== null) {
+        const trimmed = input.trim();
+        if (trimmed === '' || trimmed === '0') {
+          resetSymbolThreshold(sym);
+          return;
+        }
+        const val = parseInt(trimmed, 10);
+        if (!isNaN(val) && val > 0) {
+          setSymbolThreshold(sym, val);
+        }
+      }
+    }
+
+    function setSymbolThreshold(sym, val) {
+      symbolThresholds[sym] = val;
+      try {
+        const saved = JSON.parse(localStorage.getItem('stockRadarSymbolThresholds') || '{}');
+        saved[sym] = val;
+        localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(saved));
+      } catch {}
+
+      fetch('/api/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ thresholds: { [sym]: val } })
+      }).catch(() => {});
+
+      renderHUD();
+    }
+
+    function resetSymbolThreshold(sym, e) {
+      if (e) e.stopPropagation();
+      delete symbolThresholds[sym];
+      try {
+        const saved = JSON.parse(localStorage.getItem('stockRadarSymbolThresholds') || '{}');
+        delete saved[sym];
+        localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(saved));
+      } catch {}
+
+      fetch('/api/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ thresholds: { [sym]: 0 } })
+      }).catch(() => {});
+
+      renderHUD();
+    }
+
+    function resetAllThresholds(e) {
+      if (e) e.stopPropagation();
+      if (!confirm('確定要將所有股票的大單門檻全數恢復為系統預設值嗎？')) return;
+      symbolThresholds = {};
+      localStorage.removeItem('stockRadarSymbolThresholds');
+
+      fetch('/api/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reset_thresholds: true })
+      }).catch(() => {});
+
+      renderHUD();
+    }
+
+    /* JSON 設定彈窗邏輯 */
+    function openJsonModal() {
+      const modal = ids('jsonModal');
+      const area = ids('jsonConfigArea');
+      const statusEl = ids('jsonModalStatus');
+      statusEl.innerHTML = '';
+
+      const current = {
+        symbols: symbols,
+        thresholds: symbolThresholds
+      };
+      area.value = JSON.stringify(current, null, 2);
+      modal.style.display = 'flex';
+      setTimeout(() => area.focus(), 50);
+    }
+
+    function closeJsonModal() {
+      ids('jsonModal').style.display = 'none';
+    }
+
+    function loadJsonTemplate(type) {
+      const area = ids('jsonConfigArea');
+      if (type === 'array') {
+        area.value = JSON.stringify(["2330", "2317", "3324", "3231", "3450"], null, 2);
+      } else if (type === 'objects') {
+        area.value = JSON.stringify([
+          { "symbol": "2330", "threshold": 10 },
+          { "symbol": "2317" },
+          { "symbol": "3324", "threshold": 8 },
+          { "symbol": "3231", "threshold": 50 },
+          { "symbol": "3450" }
+        ], null, 2);
+      } else {
+        area.value = JSON.stringify({
+          "symbols": ["2330", "2317", "3324", "3231", "3450"],
+          "thresholds": {
+            "2330": 10,
+            "3231": 50
+          }
+        }, null, 2);
+      }
+    }
+
+    function copyJsonConfig(btn) {
+      const area = ids('jsonConfigArea');
+      const text = area.value;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.innerText;
+          btn.innerText = '已複製 ✔';
+          setTimeout(() => { btn.innerText = orig; }, 1200);
+        }).catch(() => {
+          area.select();
+          document.execCommand('copy');
+          const orig = btn.innerText;
+          btn.innerText = '已複製 ✔';
+          setTimeout(() => { btn.innerText = orig; }, 1200);
+        });
+      } else {
+        area.select();
+        document.execCommand('copy');
+        const orig = btn.innerText;
+        btn.innerText = '已複製 ✔';
+        setTimeout(() => { btn.innerText = orig; }, 1200);
+      }
+    }
+
+    async function saveJsonConfig() {
+      const statusEl = ids('jsonModalStatus');
+      const raw = ids('jsonConfigArea').value.trim();
+      if (!raw) {
+        statusEl.innerHTML = '<span style="color:#f87171;">請輸入 JSON 內容。</span>';
+        return;
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (err) {
+        statusEl.innerHTML = `<span style="color:#f87171;">❌ JSON 語法錯誤：${err.message}</span>`;
+        return;
+      }
+
+      let newSymbols = [];
+      let newThresholds = {};
+
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          if (typeof item === 'string' || typeof item === 'number') {
+            const s = String(item).trim();
+            if (s && !newSymbols.includes(s)) newSymbols.push(s);
+          } else if (item && typeof item === 'object') {
+            const s = String(item.symbol || item.code || item.id || '').trim();
+            if (s && !newSymbols.includes(s)) {
+              newSymbols.push(s);
+              const t = parseInt(item.threshold || item.thresh || 0, 10);
+              if (t > 0) newThresholds[s] = t;
+            }
+          }
+        }
+      } else if (parsed && typeof parsed === 'object') {
+        if (Array.isArray(parsed.symbols)) {
+          for (const s of parsed.symbols) {
+            const str = String(s).trim();
+            if (str && !newSymbols.includes(str)) newSymbols.push(str);
+          }
+        } else {
+          for (const [k, v] of Object.entries(parsed)) {
+            const str = String(k).trim();
+            if (str && /^\d+$/.test(str) && !newSymbols.includes(str)) {
+              newSymbols.push(str);
+              const t = parseInt(v, 10);
+              if (t > 0) newThresholds[str] = t;
+            }
+          }
+        }
+
+        if (parsed.thresholds && typeof parsed.thresholds === 'object') {
+          for (const [k, v] of Object.entries(parsed.thresholds)) {
+            const t = parseInt(v, 10);
+            if (t > 0) newThresholds[String(k).trim()] = t;
+          }
+        }
+      }
+
+      if (newSymbols.length === 0) {
+        statusEl.innerHTML = '<span style="color:#f87171;">❌ 未在 JSON 中找到有效的股票代號。</span>';
+        return;
+      }
+
+      if (newSymbols.length > 5) {
+        statusEl.innerHTML = '<span style="color:#fbbf24;">⚠️ 最多監控 5 檔個股，已自動取前 5 檔。</span>';
+        newSymbols = newSymbols.slice(0, 5);
+      }
+
+      statusEl.innerHTML = '<span style="color:#38bdf8;">⏳ 正在儲存並向交易所查詢股票資訊...</span>';
+
+      try {
+        const res = await fetch('/api/watchlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            symbols: newSymbols,
+            thresholds: newThresholds,
+            replace_thresholds: true
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'ok' && data.watchlist) {
+          const wl = data.watchlist;
+          symbols = wl.symbols || newSymbols;
+          symbolThresholds = wl.thresholds || newThresholds;
+          if (wl.names) symbolNames = { ...symbolNames, ...wl.names };
+          if (wl.references) symbolReferences = { ...symbolReferences, ...wl.references };
+          if (wl.dispositions) symbolDispositions = { ...symbolDispositions, ...wl.dispositions };
+
+          localStorage.setItem('stockRadarCustomSymbols', JSON.stringify(symbols));
+          localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+
+          statusEl.innerHTML = '<span style="color:#34d399;">✅ 儲存成功！已套用新設定。</span>';
+          renderHUD();
+          setTimeout(closeJsonModal, 600);
+        } else {
+          statusEl.innerHTML = `<span style="color:#f87171;">❌ 儲存失敗：${data.message || '未知錯誤'}</span>`;
+        }
+      } catch (err) {
+        statusEl.innerHTML = `<span style="color:#f87171;">❌ 連線失敗：${err.message}</span>`;
+      }
+    }
+
+    function formatVol(n) {
+      if (!n) return '0';
+      const abs = Math.abs(n);
+      if (abs >= 10000) return (abs / 1000).toFixed(0) + 'k';
+      if (abs >= 1000) return (abs / 1000).toFixed(1) + 'k';
+      return String(abs);
+    }
+
+    function generatePowerSvg(seriesKey, power, maxVal) {
+      // 270 分鐘：09:00 (0) ~ 13:30 (270)
+      const W = 270, H = 25, midY = 12.5;
+      const series = power?.series || [];
+      
+      let rects = '';
+      if (series.length > 0) {
+        let lastVal = 0;
+        const minMap = {};
+        for (const pt of series) {
+          if (pt.minute !== undefined) {
+            minMap[pt.minute] = seriesKey === 'm' ? pt.m : pt.r;
+          } else if (pt.t) {
+            const parts = pt.t.split(':');
+            const h = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10);
+            const idx = (h - 9) * 60 + m;
+            if (idx >= 0 && idx <= 270) {
+              minMap[idx] = seriesKey === 'm' ? pt.m : pt.r;
+            }
+          }
+        }
+
+        const maxIdx = Math.max(...Object.keys(minMap).map(Number));
+        for (let i = 0; i <= maxIdx && i <= 270; i++) {
+          if (minMap[i] !== undefined) lastVal = minMap[i];
+          if (lastVal === 0) continue;
+          
+          const ratio = Math.min(1, Math.abs(lastVal) / (maxVal || 1));
+          const barH = Math.max(0.8, ratio * (midY - 1.5));
+          let barY, fill;
+          if (lastVal > 0) {
+            barY = midY - barH;
+            fill = '#ef4444'; // 紅柱買超
+          } else {
+            barY = midY;
+            fill = '#22c55e'; // 綠柱賣超
+          }
+          rects += `<rect x="${i}" y="${barY.toFixed(1)}" width="1.1" height="${barH.toFixed(1)}" fill="${fill}" />`;
+        }
+      }
+
+      return `
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="power-svg">
+          <!-- 中線零軸 (Zero Line) -->
+          <line x1="0" y1="${midY}" x2="${W}" y2="${midY}" stroke="rgba(255,255,255,0.25)" stroke-width="0.75" />
+          <!-- 分時累積柱狀圖 -->
+          ${rects}
+        </svg>
+      `;
     }
 
     async function loadWatchlist() {
@@ -247,36 +694,35 @@
         const res = await fetch('../data/watchlist.json?ts=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          if (data.symbols) symbols = data.symbols.map(String).slice(0, 5);
+          if (Array.isArray(data.symbols) && data.symbols.length > 0) {
+            symbols = data.symbols.map(String).slice(0, 5);
+          }
           if (data.names) symbolNames = { ...symbolNames, ...data.names };
           if (data.references) symbolReferences = { ...symbolReferences, ...data.references };
           if (data.dispositions) symbolDispositions = { ...symbolDispositions, ...data.dispositions };
+          if (data.thresholds !== undefined) {
+            symbolThresholds = {};
+            for (const [k, v] of Object.entries(data.thresholds || {})) {
+              if (Number(v) > 0) symbolThresholds[k] = Number(v);
+            }
+          }
         }
       } catch {}
-
-      const savedSyms = localStorage.getItem('stockRadarCustomSymbols');
-      if (savedSyms) {
-        try {
-          const parsed = JSON.parse(savedSyms);
-          if (Array.isArray(parsed) && parsed.length > 0) symbols = parsed.map(String).slice(0, 5);
-        } catch {}
-      }
     }
 
     function renderHUD() {
       const container = ids('stocksCol');
       container.replaceChildren();
 
-      const refTime = Date.now();
-      const LAMP_WINDOW_MS = 5000;
-
       symbols.forEach((sym, colIdx) => {
         const snap = snapshots[sym];
         const name = symbolNames[sym] || sym;
         const refP = symbolReferences[sym] || 100;
+        const defaultThresh = getDefaultThreshold(refP);
         const minVol = getSymbolThreshold(sym, refP);
+        const isCustom = Boolean(symbolThresholds[sym] && symbolThresholds[sym] !== defaultThresh);
 
-        // Price & Change (支援 latest_tick 或 latest_bar 自動備援)
+        // Price & Change
         const tick = snap?.latest_tick;
         const bar = snap?.latest_bar;
         const price = tick ? Number(tick.price) : (bar ? Number(bar.close) : null);
@@ -293,74 +739,59 @@
         const disp = snap?.disposition || symbolDispositions[sym];
         const dispIcon = disp ? `<span class="disp-warn-icon" title="⚠️ 處置股票（2分鐘撮合）">⚠️</span>` : '';
 
-        // Calculate Lamps
-        const askPrints = (snap?.at_ask_prints || []).filter(p => Number(p.volume) >= minVol);
-        const bidPrints = (snap?.at_bid_prints || []).filter(p => Number(p.volume) >= minVol);
-        const latestBuy = askPrints.at(-1);
-        const latestSell = bidPrints.at(-1);
+        // Order Flow Power (大戶/散戶買賣力)
+        const power = snap?.order_flow_power;
+        let majorNet = 0, retailNet = 0;
+        let majorVwap = '--', retailVwap = '--';
 
-        const timeBuy = latestBuy ? Date.parse(latestBuy.timestamp) : 0;
-        const timeSell = latestSell ? Date.parse(latestSell.timestamp) : 0;
-        const hasRecentBuy = latestBuy && (refTime - timeBuy <= LAMP_WINDOW_MS);
-        const hasRecentSell = latestSell && (refTime - timeSell <= LAMP_WINDOW_MS);
+        if (power) {
+          majorNet = Number(power.major_net || 0);
+          retailNet = Number(power.retail_net || 0);
+          majorVwap = power.major_vwap ? Number(power.major_vwap).toFixed(1) : '--';
+          retailVwap = power.retail_vwap ? Number(power.retail_vwap).toFixed(1) : '--';
+        } else {
+          // Fallback calculation from prints if order_flow_power not yet generated
+          const askPrints = snap?.at_ask_prints || [];
+          const bidPrints = snap?.at_bid_prints || [];
+          let mBuy = 0, mSell = 0, rBuy = 0, rSell = 0;
+          askPrints.forEach(p => {
+            const v = Number(p.volume || 0);
+            if (v >= minVol) mBuy += v; else rBuy += v;
+          });
+          bidPrints.forEach(p => {
+            const v = Number(p.volume || 0);
+            if (v >= minVol) mSell += v; else rSell += v;
+          });
+          majorNet = mBuy - mSell;
+          retailNet = rBuy - rSell;
+        }
 
-        const recentAskVols = (snap?.at_ask_prints || [])
-          .filter(p => {
-            const age = refTime - Date.parse(p.timestamp);
-            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
-          })
-          .map(p => Number(p.volume));
-        const maxBuyVol = recentAskVols.length ? Math.max(...recentAskVols) : 0;
+        const majorClass = majorNet > 0 ? 'price-up' : majorNet < 0 ? 'price-down' : 'price-flat';
+        const majorSign = majorNet > 0 ? '+' : '';
+        const retailClass = retailNet > 0 ? 'price-up' : retailNet < 0 ? 'price-down' : 'price-flat';
+        const retailSign = retailNet > 0 ? '+' : '';
 
-        const recentBidVols = (snap?.at_bid_prints || [])
-          .filter(p => {
-            const age = refTime - Date.parse(p.timestamp);
-            return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= minVol;
-          })
-          .map(p => Number(p.volume));
-        const maxSellVol = recentBidVols.length ? Math.max(...recentBidVols) : 0;
+        const series = power?.series || [];
+        const maxValMajor = Math.max(1, Math.abs(majorNet), ...series.map(p => Math.abs(p.m || 0)));
+        const maxValRetail = Math.max(1, Math.abs(retailNet), ...series.map(p => Math.abs(p.r || 0)));
 
-        const buyTier = hasRecentBuy ? calcTier(maxBuyVol, minVol) : 0;
-        const sellTier = hasRecentSell ? calcTier(maxSellVol, minVol) : 0;
-
-        const buyClass = buyTier > 0 ? `buy-tier-${buyTier}` : '';
-        const sellClass = sellTier > 0 ? `sell-tier-${sellTier}` : '';
-        const buyIcon = buyTier >= 4 ? '✨' : buyTier >= 3 ? '🔥' : '🔴';
-        const sellIcon = sellTier >= 3 ? '⚡' : '🟢';
-        const buySub = buyTier === 2 ? '+' : buyTier >= 3 ? '!!!' : '';
-        const sellSub = sellTier === 2 ? '-' : sellTier >= 3 ? '!!!' : '';
-
-        const acc = snap?.accumulation_signal;
-        const recentAccBuyCount = (snap?.at_ask_prints || []).filter(p => {
-          const age = refTime - Date.parse(p.timestamp);
-          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
-        }).length;
-        const recentAccSellCount = (snap?.at_bid_prints || []).filter(p => {
-          const age = refTime - Date.parse(p.timestamp);
-          return age >= 0 && age <= LAMP_WINDOW_MS && Number(p.volume) >= Math.min(minVol, acc?.large_threshold || minVol);
-        }).length;
-        const hasRecentAccAction = recentAccBuyCount > 0 ||
-          (Boolean(acc?.conditions?.sell_absorbed) && recentAccSellCount > 0);
-
-        const accActive = Boolean(acc && acc.active && hasRecentAccAction);
-        const accWatching = Boolean(acc && acc.watching && !acc.active && hasRecentAccAction);
-        const attackConfirmed = Boolean(accActive && acc?.stage === 'ATTACK_CONFIRMED');
-        const accClass = accActive ? 'active-acc' : accWatching ? 'watching-acc' : '';
-        const accIcon = attackConfirmed ? '⚡' : accActive ? '✨' : '🛡️';
-        const accSub = accActive ? '!!!' : accWatching ? '?' : '';
-
-        // Build Stock Card: Row 1 Name (20%), Row 2 Price (20%), Row 3 Pillar Lamps (60%)
         const themeIndex = colIdx % 5;
         const card = document.createElement('div');
         card.className = `stock-hud-card col-theme-${themeIndex}`;
         card.innerHTML = `
-          <!-- 第 1 排：股票名稱 + 代號 (佔比 1/5) -->
+          <!-- 第 1 排：股票名稱 + 代號 + 獨立大單門檻標籤與重設按鈕 -->
           <div class="card-name-row">
-            <span class="stock-name" title="${name} (${sym})">${name}</span>
-            <span class="stock-code">${sym}</span>
+            <div class="name-box">
+              <span class="stock-name" title="${name} (${sym})">${name}</span>
+              <span class="stock-code">${sym}</span>
+            </div>
+            <div class="thresh-group">
+              <button class="thresh-badge ${isCustom ? 'custom' : ''}" onclick="editThreshold('${sym}', event)" title="點擊修改大單門檻（目前：≥${minVol}張${isCustom ? '，自訂中' : '，系統預設'}）">🎯 ≥${minVol}張${isCustom ? '*' : ''}</button>
+              ${isCustom ? `<button class="thresh-reset-btn" onclick="resetSymbolThreshold('${sym}', event)" title="點擊恢復預設門檻 (${defaultThresh}張)">↺</button>` : ''}
+            </div>
           </div>
 
-          <!-- 第 2 排：股價 + 漲跌幅 (佔比 1/5) -->
+          <!-- 第 2 排：股價 + 漲跌幅 -->
           <div class="card-price-row">
             <div style="display:flex; align-items:baseline; gap:3px;">
               <span class="stock-price ${priceClass}">${price !== null ? price.toFixed(1) : '--'}</span>
@@ -369,25 +800,49 @@
             <span class="stock-change ${priceClass}">${changeText}</span>
           </div>
 
-          <!-- 第 3 排：三大巨型直立燈柱並排 (佔比 3/5) -->
-          <div class="card-lamp-row">
-            <div class="pillar-lamp ${buyClass}" title="${buyTier > 0 ? `掃貨 Lv.${buyTier}` : '無掃貨大單'}">
-              <span class="pillar-icon">${buyIcon}</span>
-              <span class="pillar-text">掃</span>
-              <span class="pillar-text">貨</span>
-              <span class="pillar-sub">${buySub}</span>
+          <!-- 第 3 排：大戶／散戶買賣力分時累積長條圖 -->
+          <div class="card-power-section">
+            <!-- 大戶買賣力 -->
+            <div class="power-block">
+              <div class="power-stat-row">
+                <span class="stat-title">大戶</span>
+                <span class="stat-net ${majorClass}">${majorSign}${majorNet}張</span>
+                <span class="stat-vwap">均價 ${majorVwap}</span>
+              </div>
+              <div class="power-chart-box" title="大戶累積買超: ${majorSign}${majorNet}張 | 均價: ${majorVwap}">
+                <div class="power-scale">
+                  <span>+${formatVol(maxValMajor)}</span>
+                  <span>0</span>
+                  <span>-${formatVol(maxValMajor)}</span>
+                </div>
+                ${generatePowerSvg('m', power, maxValMajor)}
+              </div>
             </div>
-            <div class="pillar-lamp ${sellClass}" title="${sellTier > 0 ? `倒貨 Lv.${sellTier}` : '無倒貨大單'}">
-              <span class="pillar-icon">${sellIcon}</span>
-              <span class="pillar-text">倒</span>
-              <span class="pillar-text">貨</span>
-              <span class="pillar-sub">${sellSub}</span>
+
+            <!-- 散戶買賣力 -->
+            <div class="power-block">
+              <div class="power-stat-row">
+                <span class="stat-title">散戶</span>
+                <span class="stat-net ${retailClass}">${retailSign}${retailNet}張</span>
+                <span class="stat-vwap">均價 ${retailVwap}</span>
+              </div>
+              <div class="power-chart-box" title="散戶累積買超: ${retailSign}${retailNet}張 | 均價: ${retailVwap}">
+                <div class="power-scale">
+                  <span>+${formatVol(maxValRetail)}</span>
+                  <span>0</span>
+                  <span>-${formatVol(maxValRetail)}</span>
+                </div>
+                ${generatePowerSvg('r', power, maxValRetail)}
+              </div>
             </div>
-            <div class="pillar-lamp ${accClass}" title="${attackConfirmed ? '轉攻擊確認：站上 VWAP 且放量突破' : accActive ? '低檔承接條件確認' : accWatching ? '承接證據仍在形成' : '無承接'}">
-              <span class="pillar-icon">${accIcon}</span>
-              <span class="pillar-text">${attackConfirmed ? '轉' : '承'}</span>
-              <span class="pillar-text">${attackConfirmed ? '攻' : '接'}</span>
-              <span class="pillar-sub">${accSub}</span>
+
+            <!-- 分時時間刻度標記 (09 ~ 13:30) -->
+            <div class="power-time-row">
+              <span>09</span>
+              <span>10</span>
+              <span>11</span>
+              <span>12</span>
+              <span>13</span>
             </div>
           </div>
         `;
@@ -421,18 +876,17 @@
         } else {
           ids('statusDot').className = 'status-dot stale';
         }
-      } catch (e) {
+      } catch {
         ids('statusDot').className = 'status-dot stale';
       }
     }
 
-    async function init() {
+    window.addEventListener('DOMContentLoaded', async () => {
       await loadWatchlist();
       await refresh();
       setInterval(refresh, 1000);
-    }
-
-    init();
+      setInterval(loadWatchlist, 10000);
+    });
   </script>
 </body>
 </html>

@@ -19,6 +19,18 @@ def make_radar_handler(root: Path, monitoring: Any | None = None):
             pass
 
         def do_GET(self) -> None:
+            if self.path.startswith("/api/watchlist"):
+                watchlist_path = root / "data" / "watchlist.json"
+                if watchlist_path.exists():
+                    try:
+                        wl_data = json.loads(watchlist_path.read_text(encoding="utf-8-sig"))
+                        self._write_json(200, wl_data)
+                        return
+                    except Exception:
+                        pass
+                self._write_json(200, {"symbols": [], "thresholds": {}})
+                return
+
             if self.path.startswith("/api/monitoring"):
                 if monitoring is None:
                     self._write_json(503, {"enabled": False, "state": "UNAVAILABLE", "last_error": "此 Web Server 不支援監控控制。"})
@@ -112,7 +124,7 @@ def make_radar_handler(root: Path, monitoring: Any | None = None):
                     self._write_json(200, monitoring.start() if enabled else monitoring.stop())
                 except (ValueError, json.JSONDecodeError) as exc:
                     self._write_json(400, {"status": "error", "message": str(exc)})
-                return
+                    return
 
             if self.path == "/api/watchlist":
                 content_length = int(self.headers.get("Content-Length", 0))
@@ -129,18 +141,61 @@ def make_radar_handler(root: Path, monitoring: Any | None = None):
                         except Exception:
                             pass
                     
-                    existing_symbols = data.get("symbols", existing.get("symbols", []))
+                    # 1. Resolve symbols (up to 5)
+                    if "symbols" in data:
+                        raw_syms = data.get("symbols", [])
+                        new_symbols = [str(s).strip() for s in raw_syms if str(s).strip()][:5]
+                    else:
+                        new_symbols = existing.get("symbols", [])
+
                     existing_names = {**existing.get("names", {}), **data.get("names", {})}
                     existing_refs = {**existing.get("references", {}), **data.get("references", {})}
                     existing_limits = {**existing.get("limit_up", {}), **data.get("limit_up", {})}
                     existing_disps = {**existing.get("dispositions", {}), **data.get("dispositions", {})}
                     
+                    # Auto-enrich missing stock names and reference prices
+                    from stock_radar.tw_stocks import fetch_online_stock_info, lookup_stock_name
+                    for sym in new_symbols:
+                        need_online = (
+                            not existing_names.get(sym)
+                            or existing_names[sym].startswith(f"個股 {sym}")
+                            or float(existing_refs.get(sym, 0.0)) <= 0.0
+                        )
+                        if need_online:
+                            online = fetch_online_stock_info(sym)
+                            if online:
+                                if online.get("name"):
+                                    existing_names[sym] = online["name"]
+                                if online.get("reference", 0.0) > 0:
+                                    existing_refs[sym] = float(online["reference"])
+                                if online.get("limit_up", 0.0) > 0:
+                                    existing_limits[sym] = float(online["limit_up"])
+                        if not existing_names.get(sym):
+                            existing_names[sym] = lookup_stock_name(sym) or f"個股 {sym}"
+                        if float(existing_refs.get(sym, 0.0)) <= 0.0:
+                            existing_refs[sym] = 100.0
+
+                    # 2. Thresholds
+                    incoming_thresh = data.get("thresholds", {})
+                    if data.get("reset_thresholds") or data.get("replace_thresholds"):
+                        existing_thresholds = {}
+                    else:
+                        existing_thresholds = {**existing.get("thresholds", {})}
+
+                    for k, v in incoming_thresh.items():
+                        k_str = str(k).strip()
+                        if v and int(v) > 0:
+                            existing_thresholds[k_str] = int(v)
+                        else:
+                            existing_thresholds.pop(k_str, None)
+                    
                     updated = {
-                        "symbols": existing_symbols,
+                        "symbols": new_symbols,
                         "names": existing_names,
                         "references": existing_refs,
                         "limit_up": existing_limits,
                         "dispositions": existing_disps,
+                        "thresholds": existing_thresholds,
                     }
                     watchlist_path.write_text(json.dumps(updated, indent=2, ensure_ascii=False), encoding="utf-8")
 

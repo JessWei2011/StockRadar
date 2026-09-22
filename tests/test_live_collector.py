@@ -120,6 +120,7 @@ class LiveCollectorTests(unittest.TestCase):
             self.assertEqual(21, snapshot["bar_count"])
             self.assertTrue(snapshot["pressure_gauge"]["available"])
 
+
     def test_seed_uses_history_without_replaying_toasts(self) -> None:
         delivered: list[tuple[str, str]] = []
         with tempfile.TemporaryDirectory() as directory:
@@ -134,3 +135,35 @@ class LiveCollectorTests(unittest.TestCase):
             snapshot = json.loads((Path(directory) / "3324.json").read_text(encoding="utf-8"))
             self.assertEqual(21, snapshot["bar_count"])
             self.assertTrue(snapshot["pressure_gauge"]["available"])
+
+    def test_order_flow_power_tracking(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            processor = LiveCandidateProcessor(Path(directory))
+            processor.custom_thresholds["3324"] = 10
+            processor.seed("3324", [bar(0)])
+            processor.process_bidask(
+                "3324",
+                normalise_bidask({"Date": "2026/08/28", "Time": "09:01:00.000000", "BidPrice": [100.0], "AskPrice": [101.0]}),
+            )
+            # Major buy: vol 15 >= 10 at ask 101.0
+            processor.process_tick(
+                "3324",
+                normalise_tick({"Date": "2026/08/28", "Time": "09:01:01.000000", "Close": 101.0, "Volume": 15, "TotalVolume": 15}),
+            )
+            # Retail sell: vol 3 < 10 at bid 100.0
+            processor.process_tick(
+                "3324",
+                normalise_tick({"Date": "2026/08/28", "Time": "09:01:05.000000", "Close": 100.0, "Volume": 3, "TotalVolume": 18}),
+            )
+            snapshot = json.loads((Path(directory) / "3324.json").read_text(encoding="utf-8"))
+            power = snapshot.get("order_flow_power")
+            self.assertIsNotNone(power)
+            self.assertEqual(15, power["major_net"])
+            self.assertEqual(101.0, power["major_vwap"])
+            self.assertEqual(-3, power["retail_net"])
+            self.assertEqual(100.0, power["retail_vwap"])
+            self.assertEqual(10, power["threshold"])
+            self.assertEqual(1, len(power["series"]))
+            self.assertEqual("09:01", power["series"][0]["t"])
+            self.assertEqual(15, power["series"][0]["m"])
+            self.assertEqual(-3, power["series"][0]["r"])

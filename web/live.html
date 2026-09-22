@@ -454,6 +454,7 @@
 
         <!-- Custom Symbol Picker Button -->
         <button id="symbolConfigBtn" class="ctrl-btn" title="自訂監控股票代號與排列順序">⚙️ 自訂選股 (<span id="activeCount">5</span>檔)</button>
+        <button id="jsonConfigBtn" class="ctrl-btn" title="以 JSON 快速設定五檔個股與門檻">📝 JSON</button>
 
         <!-- Mini Floating HUD Button -->
         <button id="miniHudBtn" class="ctrl-btn" title="開啟右側直式迷你懸浮側欄 (Mini HUD)" onclick="window.open('mini.html', 'StockRadarMini', 'width=220,height=680,resizable=yes,top=40,left=1690')">📌 右側懸浮側欄</button>
@@ -532,6 +533,36 @@
         <div class="modal-footer">
           <button id="cancelModalBtn" class="modal-cancel-btn">取消</button>
           <button id="saveSymbolsBtn" class="modal-save-btn">確定套用順序</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- JSON Configuration Modal -->
+    <div id="liveJsonModal" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>📝 五檔個股 JSON 設定</h3>
+          <button id="closeJsonModalBtn" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="font-size: 0.76rem; color: #94a3b8; margin-bottom: 8px;">
+            支援代號陣列或包含門檻的物件，最多 5 檔個股。儲存後立即生效並自動向交易所查詢名稱與參考價：
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+            <span style="font-size:0.72rem; color:#94a3b8; font-weight:700;">快速範本：</span>
+            <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:0.7rem;" onclick="loadLiveJsonTemplate('standard')">標準物件</button>
+            <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:0.7rem;" onclick="loadLiveJsonTemplate('array')">代號陣列</button>
+            <button type="button" class="ctrl-btn" style="padding:2px 8px; font-size:0.7rem;" onclick="loadLiveJsonTemplate('objects')">清單明細</button>
+          </div>
+          <textarea id="liveJsonArea" spellcheck="false" style="width:100%; height:200px; background:#070b13; border:1px solid #334155; border-radius:6px; color:#38bdf8; font-family:monospace; font-size:0.80rem; line-height:1.4; padding:10px; box-sizing:border-box; outline:none; resize:vertical;"></textarea>
+          <div id="liveJsonStatus" style="font-size:0.75rem; min-height:18px; margin-top:6px;"></div>
+        </div>
+        <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+          <button id="copyJsonBtn" class="modal-cancel-btn" style="color:#cbd5e1;">📋 複製 JSON</button>
+          <div style="display:flex; gap:8px;">
+            <button id="cancelJsonBtn" class="modal-cancel-btn">取消</button>
+            <button id="saveJsonBtn" class="modal-save-btn">💾 儲存並套用</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1518,6 +1549,174 @@
         refresh();
       }
     });
+
+    // --- JSON Config Modal Logic ---
+    const jsonConfigBtn = ids('jsonConfigBtn');
+    const liveJsonModal = ids('liveJsonModal');
+    const closeJsonModalBtn = ids('closeJsonModalBtn');
+    const cancelJsonBtn = ids('cancelJsonBtn');
+    const saveJsonBtn = ids('saveJsonBtn');
+    const copyJsonBtn = ids('copyJsonBtn');
+    const liveJsonArea = ids('liveJsonArea');
+    const liveJsonStatus = ids('liveJsonStatus');
+
+    window.loadLiveJsonTemplate = function(type) {
+      if (type === 'array') {
+        liveJsonArea.value = JSON.stringify(["2330", "2317", "3324", "3231", "3450"], null, 2);
+      } else if (type === 'objects') {
+        liveJsonArea.value = JSON.stringify([
+          { "symbol": "2330", "threshold": 10 },
+          { "symbol": "2317" },
+          { "symbol": "3324", "threshold": 8 },
+          { "symbol": "3231", "threshold": 50 },
+          { "symbol": "3450" }
+        ], null, 2);
+      } else {
+        liveJsonArea.value = JSON.stringify({
+          "symbols": ["2330", "2317", "3324", "3231", "3450"],
+          "thresholds": {
+            "2330": 10,
+            "3231": 50
+          }
+        }, null, 2);
+      }
+    };
+
+    if (jsonConfigBtn) {
+      jsonConfigBtn.addEventListener('click', () => {
+        liveJsonStatus.innerHTML = '';
+        const current = {
+          symbols: symbols,
+          thresholds: symbolThresholds
+        };
+        liveJsonArea.value = JSON.stringify(current, null, 2);
+        liveJsonModal.classList.add('show');
+        setTimeout(() => liveJsonArea.focus(), 50);
+      });
+    }
+
+    function hideLiveJsonModal() {
+      if (liveJsonModal) liveJsonModal.classList.remove('show');
+    }
+    if (closeJsonModalBtn) closeJsonModalBtn.addEventListener('click', hideLiveJsonModal);
+    if (cancelJsonBtn) cancelJsonBtn.addEventListener('click', hideLiveJsonModal);
+
+    if (copyJsonBtn) {
+      copyJsonBtn.addEventListener('click', () => {
+        const text = liveJsonArea.value;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            copyJsonBtn.textContent = '已複製 ✔';
+            setTimeout(() => { copyJsonBtn.textContent = '📋 複製 JSON'; }, 1200);
+          });
+        }
+      });
+    }
+
+    if (saveJsonBtn) {
+      saveJsonBtn.addEventListener('click', async () => {
+        const raw = liveJsonArea.value.trim();
+        if (!raw) {
+          liveJsonStatus.innerHTML = '<span style="color:#f87171;">請輸入 JSON 內容。</span>';
+          return;
+        }
+        let parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch (err) {
+          liveJsonStatus.innerHTML = `<span style="color:#f87171;">❌ JSON 語法錯誤：${err.message}</span>`;
+          return;
+        }
+
+        let newSymbols = [];
+        let newThresholds = {};
+
+        if (Array.isArray(parsed)) {
+          for (const item of parsed) {
+            if (typeof item === 'string' || typeof item === 'number') {
+              const s = String(item).trim();
+              if (s && !newSymbols.includes(s)) newSymbols.push(s);
+            } else if (item && typeof item === 'object') {
+              const s = String(item.symbol || item.code || item.id || '').trim();
+              if (s && !newSymbols.includes(s)) {
+                newSymbols.push(s);
+                const t = parseInt(item.threshold || item.thresh || 0, 10);
+                if (t > 0) newThresholds[s] = t;
+              }
+            }
+          }
+        } else if (parsed && typeof parsed === 'object') {
+          if (Array.isArray(parsed.symbols)) {
+            for (const s of parsed.symbols) {
+              const str = String(s).trim();
+              if (str && !newSymbols.includes(str)) newSymbols.push(str);
+            }
+          } else {
+            for (const [k, v] of Object.entries(parsed)) {
+              const str = String(k).trim();
+              if (str && /^\d+$/.test(str) && !newSymbols.includes(str)) {
+                newSymbols.push(str);
+                const t = parseInt(v, 10);
+                if (t > 0) newThresholds[str] = t;
+              }
+            }
+          }
+
+          if (parsed.thresholds && typeof parsed.thresholds === 'object') {
+            for (const [k, v] of Object.entries(parsed.thresholds)) {
+              const t = parseInt(v, 10);
+              if (t > 0) newThresholds[String(k).trim()] = t;
+            }
+          }
+        }
+
+        if (newSymbols.length === 0) {
+          liveJsonStatus.innerHTML = '<span style="color:#f87171;">❌ 未在 JSON 中找到有效的股票代號。</span>';
+          return;
+        }
+
+        if (newSymbols.length > 5) {
+          newSymbols = newSymbols.slice(0, 5);
+        }
+
+        liveJsonStatus.innerHTML = '<span style="color:#38bdf8;">⏳ 正在儲存並向交易所查詢股票資訊...</span>';
+
+        try {
+          const res = await fetch('/api/watchlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              symbols: newSymbols,
+              thresholds: newThresholds,
+              replace_thresholds: true
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'ok' && data.watchlist) {
+            const wl = data.watchlist;
+            symbols = wl.symbols || newSymbols;
+            symbolThresholds = wl.thresholds || newThresholds;
+            if (wl.names) symbolNames = { ...symbolNames, ...wl.names };
+            if (wl.references) symbolReferences = { ...symbolReferences, ...wl.references };
+            if (wl.dispositions) symbolDispositions = { ...symbolDispositions, ...wl.dispositions };
+
+            localStorage.setItem('stockRadarCustomSymbols', JSON.stringify(symbols));
+            localStorage.setItem('stockRadarSymbolThresholds', JSON.stringify(symbolThresholds));
+
+            liveJsonStatus.innerHTML = '<span style="color:#34d399;">✅ 儲存成功！已套用新設定。</span>';
+            ids('activeCount').textContent = symbols.length;
+            setTimeout(() => {
+              hideLiveJsonModal();
+              refresh();
+            }, 600);
+          } else {
+            liveJsonStatus.innerHTML = `<span style="color:#f87171;">❌ 儲存失敗：${data.message || '未知錯誤'}</span>`;
+          }
+        } catch (err) {
+          liveJsonStatus.innerHTML = `<span style="color:#f87171;">❌ 連線失敗：${err.message}</span>`;
+        }
+      });
+    }
 
     async function init() {
       try {

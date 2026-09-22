@@ -108,6 +108,95 @@ def _book_is_fresh(book: Mapping[str, Any], tick: Mapping[str, Any]) -> bool:
     return abs((tick_time - book_time).total_seconds()) <= 5
 
 
+class OrderFlowPowerTracker:
+    """Tracks intraday cumulative buy/sell power and VWAP for major and retail players."""
+
+    def __init__(self) -> None:
+        self.major_buy_vol = 0
+        self.major_sell_vol = 0
+        self.major_buy_amt = 0.0
+        self.major_sell_amt = 0.0
+        self.retail_buy_vol = 0
+        self.retail_sell_vol = 0
+        self.retail_buy_amt = 0.0
+        self.retail_sell_amt = 0.0
+        self.timeline: dict[str, dict[str, int]] = {}
+
+    def update(self, timestamp_str: str, price: float, volume: int, is_buy: bool, threshold: int) -> None:
+        amt = price * volume
+        if volume >= threshold:
+            if is_buy:
+                self.major_buy_vol += volume
+                self.major_buy_amt += amt
+            else:
+                self.major_sell_vol += volume
+                self.major_sell_amt += amt
+        else:
+            if is_buy:
+                self.retail_buy_vol += volume
+                self.retail_buy_amt += amt
+            else:
+                self.retail_sell_vol += volume
+                self.retail_sell_amt += amt
+
+        try:
+            if "T" in timestamp_str:
+                time_key = timestamp_str.split("T")[1][:5]
+            elif " " in timestamp_str:
+                time_key = timestamp_str.split(" ")[1][:5]
+            else:
+                time_key = timestamp_str[:5]
+        except Exception:
+            time_key = "09:00"
+
+        major_net = self.major_buy_vol - self.major_sell_vol
+        retail_net = self.retail_buy_vol - self.retail_sell_vol
+        self.timeline[time_key] = {"m": major_net, "r": retail_net}
+
+    def to_dict(self, threshold: int) -> dict[str, Any]:
+        major_tot = self.major_buy_vol + self.major_sell_vol
+        major_vwap = round((self.major_buy_amt + self.major_sell_amt) / major_tot, 2) if major_tot > 0 else None
+        retail_tot = self.retail_buy_vol + self.retail_sell_vol
+        retail_vwap = round((self.retail_buy_amt + self.retail_sell_amt) / retail_tot, 2) if retail_tot > 0 else None
+
+        sorted_times = sorted(self.timeline.keys())
+        series = [{"t": t, "m": self.timeline[t]["m"], "r": self.timeline[t]["r"]} for t in sorted_times]
+
+        return {
+            "major_net": self.major_buy_vol - self.major_sell_vol,
+            "major_buy_vol": self.major_buy_vol,
+            "major_sell_vol": self.major_sell_vol,
+            "major_vwap": major_vwap,
+            "retail_net": self.retail_buy_vol - self.retail_sell_vol,
+            "retail_buy_vol": self.retail_buy_vol,
+            "retail_sell_vol": self.retail_sell_vol,
+            "retail_vwap": retail_vwap,
+            "threshold": threshold,
+            "series": series,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> OrderFlowPowerTracker:
+        tracker = cls()
+        tracker.major_buy_vol = int(data.get("major_buy_vol", 0))
+        tracker.major_sell_vol = int(data.get("major_sell_vol", 0))
+        m_vwap = float(data.get("major_vwap") or 0.0)
+        tracker.major_buy_amt = tracker.major_buy_vol * m_vwap
+        tracker.major_sell_amt = tracker.major_sell_vol * m_vwap
+
+        tracker.retail_buy_vol = int(data.get("retail_buy_vol", 0))
+        tracker.retail_sell_vol = int(data.get("retail_sell_vol", 0))
+        r_vwap = float(data.get("retail_vwap") or 0.0)
+        tracker.retail_buy_amt = tracker.retail_buy_vol * r_vwap
+        tracker.retail_sell_amt = tracker.retail_sell_vol * r_vwap
+
+        if "series" in data and isinstance(data["series"], list):
+            for pt in data["series"]:
+                if isinstance(pt, dict) and "t" in pt:
+                    tracker.timeline[str(pt["t"])] = {"m": int(pt.get("m", 0)), "r": int(pt.get("r", 0))}
+        return tracker
+
+
 class LiveCandidateProcessor:
     """State held in memory for one collector process; no order capability."""
 
@@ -124,6 +213,34 @@ class LiveCandidateProcessor:
         self.at_bid_prints: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.accumulation_signals: dict[str, dict[str, Any]] = {}
         self.dispositions: dict[str, str] = {}
+        self.order_flow_trackers: dict[str, OrderFlowPowerTracker] = {}
+        self.custom_thresholds: dict[str, int] = {}
+
+    def get_threshold(self, symbol: str) -> int:
+        if symbol in self.custom_thresholds and self.custom_thresholds[symbol] > 0:
+            return self.custom_thresholds[symbol]
+        try:
+            wl_path = self.output_dir.parent / "watchlist.json"
+            if wl_path.exists():
+                wl_data = json.loads(wl_path.read_text(encoding="utf-8-sig"))
+                thresh_map = wl_data.get("thresholds", {})
+                if symbol in thresh_map and int(thresh_map[symbol]) > 0:
+                    self.custom_thresholds[symbol] = int(thresh_map[symbol])
+                    return self.custom_thresholds[symbol]
+        except Exception:
+            pass
+        ref_price = self.last_prices.get(symbol, 100.0)
+        if ref_price >= 1000:
+            return 5
+        if ref_price >= 500:
+            return 8
+        if ref_price >= 200:
+            return 15
+        if ref_price >= 100:
+            return 25
+        if ref_price >= 50:
+            return 50
+        return 80
 
     def _refresh_accumulation(self, symbol: str) -> None:
         self.accumulation_signals[symbol] = detect_potential_accumulation(
@@ -169,6 +286,8 @@ class LiveCandidateProcessor:
                     self.last_prices[symbol] = float(content["latest_tick"]["price"])
             if "disposition" in content and content["disposition"]:
                 self.dispositions[symbol] = content["disposition"]
+            if "order_flow_power" in content and isinstance(content["order_flow_power"], dict):
+                self.order_flow_trackers[symbol] = OrderFlowPowerTracker.from_dict(content["order_flow_power"])
         except Exception:
             pass
 
@@ -237,6 +356,19 @@ class LiveCandidateProcessor:
         signals.append(record)
         # Keep the live file bounded while retaining enough records for inspection.
         del signals[:-500]
+
+        # Update order flow power tracker (major vs retail net volume & VWAP)
+        thresh = self.get_threshold(symbol)
+        if symbol not in self.order_flow_trackers:
+            self.order_flow_trackers[symbol] = OrderFlowPowerTracker()
+        self.order_flow_trackers[symbol].update(
+            str(tick["timestamp"]),
+            price,
+            int(tick["volume"]),
+            is_buy=(classification == "AT_BEST_ASK"),
+            threshold=thresh,
+        )
+
         self._refresh_accumulation(symbol)
         self._write(symbol)
         return record
@@ -245,6 +377,9 @@ class LiveCandidateProcessor:
         try:
             self.output_dir.mkdir(parents=True, exist_ok=True)
             latest_bar = self.bars[symbol][-1] if self.bars[symbol] else None
+            tracker = self.order_flow_trackers.get(symbol)
+            thresh = self.get_threshold(symbol)
+            power_payload = tracker.to_dict(thresh) if tracker else None
             payload = {
                 "schema_version": "1.0",
                 "symbol": symbol,
@@ -258,6 +393,7 @@ class LiveCandidateProcessor:
                 "at_ask_prints": self.at_ask_prints[symbol],
                 "at_bid_prints": self.at_bid_prints[symbol],
                 "disposition": self.dispositions.get(symbol),
+                "order_flow_power": power_payload,
             }
             content = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
             destination = self.output_dir / f"{symbol}.json"
